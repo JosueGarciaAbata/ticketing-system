@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: ticketing
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: ${DB_SCHEMA}
+    hibernate:
+      ddl-auto: validate
+
+jwt:
+  secret: 256-bit-secret-key-here-make-it-long-and-random
+  expiration: 3600000
