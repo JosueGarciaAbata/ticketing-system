@@ -2,17 +2,21 @@ spring:
   application:
     name: ticketing
   datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:postgresql}
+    password: ${DB_PASSWORD:}
     url: ${DB_URL}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
-        default_schema: ${DB_SCHEMA}
+        default_schema: ${DB_SCHEMA:public}
     hibernate:
       ddl-auto: validate
 
 jwt:
-  secret: 256-bit-secret-key-here-make-it-long-and-random
+  secret: ${SECRET_KEY:256-bit-secret-key-here-make-it-long-and-random}
   expiration: 3600000
+
+logging:
+  level:
+    org.springframework.security: DEBUG

@@ -1,5 +1,7 @@
 package com.josue.ticketing.config;
 
+import com.josue.ticketing.user.dtos.UserDetailsDto;
+import com.josue.ticketing.user.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -33,15 +35,15 @@ public class JwtService {
     }
 
     // Generate token with just the user details
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetailsDto user) {
+        return generateToken(new HashMap<>(), user);
     }
 
     // Generate token with extra claims (roles, permissions, etc.)
-    public String generateToken(Map extraClaims, UserDetails userDetails) {
+    public String generateToken(Map<String, Object> extraClaims, UserDetailsDto userDetailsDto) {
         return Jwts.builder()
                 .claims(extraClaims)
-                .subject(userDetails.getUsername())
+                .subject(userDetailsDto.email())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSigningKey())
@@ -49,9 +51,9 @@ public class JwtService {
     }
 
     // Validate token - check username matches and token is not expired
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, UserDetailsDto userDetailsDto) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userDetailsDto.email())) && !isTokenExpired(token);
     }
 
     // Check if token has expired
@@ -65,7 +67,7 @@ public class JwtService {
     }
 
     // Parse the token and extract all claims
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

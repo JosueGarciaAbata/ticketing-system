@@ -1,67 +1,85 @@
 package com.josue.ticketing.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.josue.ticketing.user.dtos.UserDetailsDto;
+import com.josue.ticketing.user.dtos.UserLoginRequest;
+import com.josue.ticketing.user.entities.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-@Component
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+// Hace logeo para el usuario.
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private JwtService jwtService;
+
+    public JwtAuthenticationFilter(AuthenticationManager manager, JwtService jwtService) {
+        super.setAuthenticationManager(manager);
+        this.setFilterProcessesUrl("/auth/login");
+        this.jwtService = jwtService;
+    }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        // Get the Authorization header
-        final String authHeader = request.getHeader("Authorization");
-
-        // JWT tokens are sent as "Bearer "
-        // If header is missing or does not start with Bearer, skip this filter
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
+        UserLoginRequest user = null;
+        String email = null;
+        String password = null;
+        try {
+            UserLoginRequest userLoginRequest = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
+            email = userLoginRequest.email();
+            password = userLoginRequest.password();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        // Extract the token (everything after "Bearer ")
-        final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsername(jwt);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        return super.getAuthenticationManager().authenticate(authenticationToken);
+    }
 
-        // If we have a username and no authentication exists yet
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Load user details from database
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        // Spring Security User
+        UserDetails user = (UserDetails) authResult.getPrincipal();
+        String username = user.getUsername();
 
-            // Validate the token
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                // Create authentication token
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,  // No credentials needed - JWT already validated
-                        userDetails.getAuthorities()
-                );
+        Collection<? extends GrantedAuthority> roles = user.getAuthorities();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles.stream().map(GrantedAuthority::getAuthority).toList());
+        claims.put("email", username);
 
-                // Attach request details
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        UserDetailsDto userDetailsDto = new UserDetailsDto(username);
+        String token = jwtService.generateToken(claims, userDetailsDto);
 
-                // Set the authentication in the security context
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
+        Map<String, String> body = new HashMap<>();
+        body.put("token", token);
+        body.put("email",  username);
+        body.put("message", "Has iniciado sesino con exito " + username);
 
-        // Continue the filter chain
-        filterChain.doFilter(request, response);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Credenciales invalidas.");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
     }
 }
