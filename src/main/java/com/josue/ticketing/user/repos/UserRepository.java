@@ -10,4 +10,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query(value = "SELECT DISTINCT u FROM User u JOIN FETCH u.roles r WHERE u.email = :email")
     Optional<User> findByEmailWithRoles(String email);
+
+    boolean existsByEmail(String email);
 }

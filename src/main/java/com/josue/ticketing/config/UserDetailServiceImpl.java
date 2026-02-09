@@ -1,4 +1,4 @@
-package com.josue.ticketing.user.service;
+package com.josue.ticketing.config;
 
 import com.josue.ticketing.user.entities.User;
 import com.josue.ticketing.user.entities.UserDetailsImpl;
