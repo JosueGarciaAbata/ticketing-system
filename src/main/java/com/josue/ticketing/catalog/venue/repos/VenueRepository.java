@@ -11,4 +11,6 @@ public interface VenueRepository extends JpaRepository<Venue,Integer> {
     @Query("SELECT v FROM Venue v LEFT JOIN FETCH v.shows s WHERE v.id = :id")
     Optional<Venue> findByIdWithShows(Integer id);
 
+    boolean existsByCityId(Integer cityId);
+
 }

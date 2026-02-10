@@ -8,6 +8,7 @@ import com.josue.ticketing.catalog.city.exceps.CityAlreadyExistsException;
 import com.josue.ticketing.catalog.city.exceps.CityHasDependenciesException;
 import com.josue.ticketing.catalog.city.exceps.CityNotFoundException;
 import com.josue.ticketing.catalog.city.repos.CityRepository;
+import com.josue.ticketing.catalog.venue.repos.VenueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.List;
 public class CityServiceImpl implements CityService {
 
     private final CityRepository cityRepository;
+    private final VenueRepository venueRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -89,7 +91,7 @@ public class CityServiceImpl implements CityService {
     @Override
     public void delete(Integer id) {
         City city = cityRepository.findByIdWithVenues(id).orElseThrow(() -> new CityNotFoundException("Ciudad no encontrada con id= " + id));
-        if (!city.getVenues().isEmpty()) {
+        if (venueRepository.existsByCityId(city.getId())) {
             throw new CityHasDependenciesException("La ciudad tiene lugares asociados. Borralos primero antes de proseguir.");
         }
         cityRepository.delete(city);

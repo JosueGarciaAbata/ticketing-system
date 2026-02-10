@@ -1,19 +1,11 @@
 info:
-  name: update
+  name: delete
   type: http
-  seq: 3
+  seq: 4
 
 http:
-  method: PUT
+  method: DELETE
   url: "{{host}}/api/v1/venues/1"
-  body:
-    type: json
-    data: |-
-      {
-        "cityId": 1,
-        "name": "Terminal del norte",
-        "capacity": 60
-      }
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzM3MDM2LCJleHAiOjE3NzA3NDA2MzZ9.mkvQa5UMtd8y6gSgoSS9TvVy6-ydEQ79ds4EvrrGdm0
