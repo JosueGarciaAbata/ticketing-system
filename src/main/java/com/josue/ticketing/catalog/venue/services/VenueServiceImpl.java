@@ -4,6 +4,7 @@ import com.josue.ticketing.catalog.city.entities.City;
 import com.josue.ticketing.catalog.city.exceps.CityNotFoundException;
 import com.josue.ticketing.catalog.city.repos.CityRepository;
 import com.josue.ticketing.catalog.show.entities.Show;
+import com.josue.ticketing.catalog.show.repos.ShowRepository;
 import com.josue.ticketing.catalog.venue.dtos.VenueCreateRequest;
 import com.josue.ticketing.catalog.venue.dtos.VenueResponse;
 import com.josue.ticketing.catalog.venue.dtos.VenueUpdateRequest;
@@ -23,6 +24,7 @@ public class VenueServiceImpl implements VenueService {
 
     private final VenueRepository venueRepository;
     private final CityRepository cityRepository;
+    private final ShowRepository showRepository;
 
     @Override
     public List<VenueResponse> findAll() {
@@ -63,10 +65,13 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public void delete(Integer id) {
-        Venue venue = venueRepository.findByIdWithShows(id).orElseThrow(() -> new VenueNotFoundException("No se ha encontrado el lugar con id=" + id));
-        if (!venue.getShows().isEmpty()) {
+        if (!venueRepository.existsById(id)) {
+            throw new VenueNotFoundException("No se ha encontrado el lugar con id=" + id);
+        }
+        if (showRepository.existsByEventId(id)) {
             throw new VenueHasDependenciesException("El lugar tiene shows asociados. No se puede eliminar.");
         }
-        venueRepository.delete(venue);
+
+        venueRepository.deleteById(id);
     }
 }

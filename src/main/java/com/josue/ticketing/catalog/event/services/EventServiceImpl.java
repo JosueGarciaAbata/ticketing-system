@@ -85,13 +85,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void delete(Integer id) {
-
         if (!eventRepository.existsById(id)) {
             throw new EventNotFoundException("Evento no encontrado con id=" + id);
         }
 
         if (showRepository.existsByEventId(id)) {
-            throw new EventHasDependenciesException("El evento tiene funciones asociadas.");
+            throw new EventHasDependenciesException("El evento tiene funciones asociadas. No se puede eliminar.");
         }
 
         eventRepository.deleteById(id);

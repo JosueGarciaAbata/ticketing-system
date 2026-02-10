@@ -90,10 +90,12 @@ public class CityServiceImpl implements CityService {
     @Transactional(readOnly = false)
     @Override
     public void delete(Integer id) {
-        City city = cityRepository.findByIdWithVenues(id).orElseThrow(() -> new CityNotFoundException("Ciudad no encontrada con id= " + id));
-        if (venueRepository.existsByCityId(city.getId())) {
+        if (!cityRepository.existsById(id)) {
+            throw new CityNotFoundException("Ciudad no encontrada con id= " + id);
+        }
+        if (venueRepository.existsByCityId(id)) {
             throw new CityHasDependenciesException("La ciudad tiene lugares asociados. Borralos primero antes de proseguir.");
         }
-        cityRepository.delete(city);
+        cityRepository.deleteById(id);
     }
 }
