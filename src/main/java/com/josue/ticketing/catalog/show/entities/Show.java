@@ -1,12 +1,16 @@
 package com.josue.ticketing.catalog.show.entities;
 
-import com.josue.ticketing.catalog.events.entities.Event;
+import com.josue.ticketing.catalog.event.entities.Event;
 import com.josue.ticketing.catalog.show.enums.ShowStatus;
 import com.josue.ticketing.catalog.venue.entities.Venue;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.ZonedDateTime;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "shows")
 public class Show {
@@ -15,11 +19,11 @@ public class Show {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 

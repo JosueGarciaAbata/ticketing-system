@@ -1,9 +1,9 @@
-package com.josue.ticketing.catalog.city.api;
+package com.josue.ticketing.catalog.city.controllers;
 
 import com.josue.ticketing.catalog.city.dtos.CityCreateRequest;
 import com.josue.ticketing.catalog.city.dtos.CityResponse;
 import com.josue.ticketing.catalog.city.dtos.CityUpdateRequest;
-import com.josue.ticketing.catalog.city.service.CityService;
+import com.josue.ticketing.catalog.city.services.CityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

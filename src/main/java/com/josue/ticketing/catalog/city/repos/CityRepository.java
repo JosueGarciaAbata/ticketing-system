@@ -1,10 +1,9 @@
-package com.josue.ticketing.catalog.city.repo;
+package com.josue.ticketing.catalog.city.repos;
 
 import com.josue.ticketing.catalog.city.entities.City;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CityRepository extends JpaRepository<City, Integer> {

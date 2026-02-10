@@ -1,4 +1,4 @@
-package com.josue.ticketing.catalog.events.entities;
+package com.josue.ticketing.catalog.event.entities;
 
 import com.josue.ticketing.user.entities.User;
 import jakarta.persistence.*;

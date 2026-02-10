@@ -1,4 +1,4 @@
-package com.josue.ticketing.catalog.city.excep;
+package com.josue.ticketing.catalog.city.exceps;
 
 public class CityNotFoundException extends RuntimeException{
 

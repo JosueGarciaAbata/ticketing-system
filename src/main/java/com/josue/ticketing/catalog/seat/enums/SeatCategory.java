@@ -1,4 +1,4 @@
-package com.josue.ticketing.catalog.seats.enums;
+package com.josue.ticketing.catalog.seat.enums;
 
 public enum SeatCategory {
     NORMAL,

@@ -1,0 +1,9 @@
+info:
+  name: venue
+  type: folder
+  seq: 1
+
+request:
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzM3NzU2LCJleHAiOjE3NzA3NDEzNTZ9.IUrl74lEHvEtDmSwyd_fEa_jw9nX95WmUcgT-H7Scwo

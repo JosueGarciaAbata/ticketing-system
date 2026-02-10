@@ -1,7 +1,7 @@
-package com.josue.ticketing.catalog.seats.entities;
+package com.josue.ticketing.catalog.seat.entities;
 
-import com.josue.ticketing.catalog.seats.enums.SeatCategory;
-import com.josue.ticketing.catalog.seats.enums.SeatStatus;
+import com.josue.ticketing.catalog.seat.enums.SeatCategory;
+import com.josue.ticketing.catalog.seat.enums.SeatStatus;
 import com.josue.ticketing.catalog.show.entities.Show;
 import jakarta.persistence.*;
 

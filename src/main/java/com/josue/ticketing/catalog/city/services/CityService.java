@@ -1,4 +1,4 @@
-package com.josue.ticketing.catalog.city.service;
+package com.josue.ticketing.catalog.city.services;
 
 import com.josue.ticketing.catalog.city.dtos.CityCreateRequest;
 import com.josue.ticketing.catalog.city.dtos.CityResponse;

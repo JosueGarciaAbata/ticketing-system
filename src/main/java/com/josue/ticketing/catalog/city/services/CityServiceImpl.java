@@ -1,13 +1,13 @@
-package com.josue.ticketing.catalog.city.service;
+package com.josue.ticketing.catalog.city.services;
 
 import com.josue.ticketing.catalog.city.dtos.CityCreateRequest;
 import com.josue.ticketing.catalog.city.dtos.CityResponse;
 import com.josue.ticketing.catalog.city.dtos.CityUpdateRequest;
 import com.josue.ticketing.catalog.city.entities.City;
-import com.josue.ticketing.catalog.city.excep.CityAlreadyExistsException;
-import com.josue.ticketing.catalog.city.excep.CityHasDependenciesException;
-import com.josue.ticketing.catalog.city.excep.CityNotFoundException;
-import com.josue.ticketing.catalog.city.repo.CityRepository;
+import com.josue.ticketing.catalog.city.exceps.CityAlreadyExistsException;
+import com.josue.ticketing.catalog.city.exceps.CityHasDependenciesException;
+import com.josue.ticketing.catalog.city.exceps.CityNotFoundException;
+import com.josue.ticketing.catalog.city.repos.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
