@@ -1,7 +1,19 @@
 package com.josue.ticketing.catalog.city.entities;
 
+import com.josue.ticketing.catalog.venue.entities.Venue;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 
+import java.util.List;
+
+@Getter
+@Setter
+@SoftDelete(columnName = "active", strategy = SoftDeleteType.ACTIVE)
+// @SQLDelete(sql = "UPDATE city SET active=false WHERE id=?")
+// @Where(clause = "active=true")
 @Entity
 @Table(name = "cities",
         uniqueConstraints =  @UniqueConstraint(columnNames = {"name", "country"}))
@@ -10,6 +22,9 @@ public class City {
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
+    private List<Venue> venue;
 
     @Column(nullable = false, length = 100)
     private  String name;
@@ -22,5 +37,10 @@ public class City {
 
     @Column(nullable = false)
     private Boolean active;
+
+    @PrePersist
+    public void prePersist() {
+        this.active = true;
+    }
 
 }

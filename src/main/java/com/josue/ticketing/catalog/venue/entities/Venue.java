@@ -23,6 +23,6 @@ public class Venue {
     private Integer capacity;
 
     @Column(nullable = false)
-    private Integer active;
+    private Boolean active;
 
 }

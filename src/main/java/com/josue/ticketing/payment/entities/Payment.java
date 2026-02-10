@@ -4,6 +4,7 @@ import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.payment.enums.PaymentStatus;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class Payment {
     private PaymentStatus status;
 
     @Column(nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
