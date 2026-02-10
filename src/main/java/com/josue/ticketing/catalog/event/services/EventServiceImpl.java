@@ -6,6 +6,8 @@ import com.josue.ticketing.catalog.event.dtos.EventUpdateRequest;
 import com.josue.ticketing.catalog.event.entities.Event;
 import com.josue.ticketing.catalog.event.exceps.EventNotFoundException;
 import com.josue.ticketing.catalog.event.repos.EventRepository;
+import com.josue.ticketing.catalog.show.exps.EventHasDependenciesException;
+import com.josue.ticketing.catalog.show.repos.ShowRepository;
 import com.josue.ticketing.config.AuthService;
 import com.josue.ticketing.user.entities.User;
 import com.josue.ticketing.user.repos.UserRepository;
@@ -22,6 +24,7 @@ public class EventServiceImpl implements EventService {
     private final AuthService authService;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final ShowRepository showRepository;
 
     @Override
     public List<EventResponse> findAll() {
@@ -83,5 +86,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public void delete(Integer id) {
 
+        if (!eventRepository.existsById(id)) {
+            throw new EventNotFoundException("Evento no encontrado con id=" + id);
+        }
+
+        if (showRepository.existsByEventId(id)) {
+            throw new EventHasDependenciesException("El evento tiene funciones asociadas.");
+        }
+
+        eventRepository.deleteById(id);
     }
 }

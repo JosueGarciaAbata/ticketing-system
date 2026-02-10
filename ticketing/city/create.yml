@@ -10,11 +10,13 @@ http:
     type: json
     data: |-
       {
-        "name": "Tena",
+        "name": "Cuenca",
         "country": "Ecuador",
         "timezone": "America/Guayaquil"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzQ5ODA2LCJleHAiOjE3NzA3NTM0MDZ9.SX9M_s6-RJvitoX38TUPW0FBi10BiKi7ZsCk9rf4PnE
 
 settings:
   encodeUrl: true

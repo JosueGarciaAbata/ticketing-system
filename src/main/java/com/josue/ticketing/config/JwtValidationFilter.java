@@ -1,6 +1,7 @@
 package com.josue.ticketing.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.josue.ticketing.user.entities.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,9 +27,11 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
     private Logger logger = LoggerFactory.getLogger(JwtValidationFilter.class);
     private JwtService jwtService;
+    private UserDetailsService  userDetailsService;
 
-    public JwtValidationFilter(JwtService jwtService) {
+    public JwtValidationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -45,20 +50,12 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         String token = header.replace("Bearer ", "");
         try {
             Claims claims = jwtService.extractAllClaims(token);
-            String email = claims.get("email", String.class);
-
-            @SuppressWarnings("unchecked")
-            Collection<String> roles = (Collection<String>) claims.get("roles");
-            Collection<? extends GrantedAuthority> authorities = roles.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .toList();
-
+            UserDetails userdetails = userDetailsService.loadUserByUsername(claims.getSubject());
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, authorities);
+                    new UsernamePasswordAuthenticationToken(userdetails, null, userdetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
-
         } catch (JwtException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json");
