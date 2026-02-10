@@ -10,6 +10,7 @@ import com.josue.ticketing.catalog.city.excep.CityNotFoundException;
 import com.josue.ticketing.catalog.city.repo.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class CityServiceImpl implements CityService {
 
     private final CityRepository cityRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<CityResponse> findAll() {
         return cityRepository.findAll().stream().map(city -> new CityResponse(
@@ -29,6 +31,7 @@ public class CityServiceImpl implements CityService {
         )).toList();
     }
 
+    @Transactional(readOnly = false)
     @Override
     public CityResponse create(CityCreateRequest req) {
         City city = new City();
@@ -46,19 +49,31 @@ public class CityServiceImpl implements CityService {
         );
     }
 
+    @Transactional(readOnly = false)
     @Override
     public CityResponse update(Integer id, CityUpdateRequest req) {
         City city = cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException("Ciudad no encontrada con id= " + id));
+        String name = req.name().trim();
+        String country = req.country().trim();
+        String timezone = req.timezone().trim();
 
         // unique(name, country)
-        boolean isUnique = cityRepository.existsByNameAndCountry(req.name(), req.country());
-        if (!isUnique) {
+        boolean alreadyExists = cityRepository.existsByNameAndCountryAndIdNot(name, country, city.getId());
+        if (alreadyExists) {
             throw new CityAlreadyExistsException("El nombre y pais de la ciudad ya se encuentran registrados.");
         }
 
-        city.setTimezone(req.timezone());
-        city.setName(req.name());
-        city.setCountry(req.country());
+        if (!name.equals(city.getName())) {
+            city.setName(name);
+        }
+
+        if (!country.equals(city.getCountry())) {
+            city.setCountry(country);
+        }
+
+        if (!timezone.equals(city.getTimezone())) {
+            city.setTimezone(timezone);
+        }
 
         cityRepository.save(city);
 
@@ -70,10 +85,11 @@ public class CityServiceImpl implements CityService {
         );
     }
 
+    @Transactional(readOnly = false)
     @Override
     public void delete(Integer id) {
         City city = cityRepository.findByIdWithVenues(id).orElseThrow(() -> new CityNotFoundException("Ciudad no encontrada con id= " + id));
-        if (!city.getVenue().isEmpty()) {
+        if (!city.getVenues().isEmpty()) {
             throw new CityHasDependenciesException("La ciudad tiene lugares asociados. Borralos primero antes de proseguir.");
         }
         cityRepository.delete(city);

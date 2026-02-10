@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface CityRepository extends JpaRepository<City, Integer> {
     boolean existsByNameAndCountry(String name, String country);
 
-    @Query("SELECT c FROM City c JOIN FETCH c.venue v WHERE c.id = :id")
+    @Query("SELECT c FROM City c LEFT JOIN FETCH c.venues v WHERE c.id = :id")
     Optional<City> findByIdWithVenues(Integer id);
+    boolean existsByNameAndCountryAndIdNot(String name, String country, Integer id);
 }

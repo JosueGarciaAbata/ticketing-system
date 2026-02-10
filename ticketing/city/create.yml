@@ -1,0 +1,23 @@
+info:
+  name: create
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{host}}/api/v1/city/"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Tena",
+        "country": "Ecuador",
+        "timezone": "America/Guayaquil"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

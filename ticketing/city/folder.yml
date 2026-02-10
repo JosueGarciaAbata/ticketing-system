@@ -1,0 +1,9 @@
+info:
+  name: city
+  type: folder
+  seq: 1
+
+request:
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzM0OTgxLCJleHAiOjE3NzA3Mzg1ODF9.GHGhr3PiQFA-3SnYhh7Ccf6ypDEdcF3ecb3rHj83rVE

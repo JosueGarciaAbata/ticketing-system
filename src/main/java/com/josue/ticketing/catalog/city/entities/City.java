@@ -24,7 +24,7 @@ public class City {
     private Integer id;
 
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
-    private List<Venue> venue;
+    private List<Venue> venues;
 
     @Column(nullable = false, length = 100)
     private  String name;
@@ -35,7 +35,7 @@ public class City {
     @Column(nullable = false, length = 100)
     private String timezone;
 
-    @Column(nullable = false)
+    @Column(nullable = false, insertable = false, updatable = false)
     private Boolean active;
 
     @PrePersist
