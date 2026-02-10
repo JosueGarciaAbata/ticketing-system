@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Integer> {
 
     @Query(value = "SELECT DISTINCT u FROM User u JOIN FETCH u.roles r WHERE u.email = :email")
     Optional<User> findByEmailWithRoles(String email);

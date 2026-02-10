@@ -32,6 +32,10 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
