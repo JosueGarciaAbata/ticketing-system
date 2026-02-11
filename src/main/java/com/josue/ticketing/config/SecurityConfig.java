@@ -46,6 +46,7 @@ public class SecurityConfig {
                         // Public endpoints - no auth required
                         .requestMatchers("/api/v1/login").permitAll()
                         .requestMatchers("/api/v1/users/reg/**").permitAll()
+                        .requestMatchers( "/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
                 )

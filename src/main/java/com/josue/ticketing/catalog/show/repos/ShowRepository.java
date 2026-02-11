@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 
 public interface ShowRepository extends JpaRepository<Show, Integer> {
 
-    boolean existsByEventId(Integer eventId);
+    boolean existsByVenueId(Integer eventId);
 
     @Query(" SELECT coalesce(sum(s.capacity), 0) FROM Show s WHERE s.venue.id = :venueId")
     int sumCapacityByVenueId(Integer venueId);
@@ -21,4 +21,5 @@ public interface ShowRepository extends JpaRepository<Show, Integer> {
         """)
     boolean existsOverlapBetween(Integer venueId, ZonedDateTime startTime, ZonedDateTime endTime);
 
+    boolean existsByEventId(Integer eventId);
 }

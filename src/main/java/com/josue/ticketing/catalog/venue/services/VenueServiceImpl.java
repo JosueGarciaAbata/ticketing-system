@@ -68,10 +68,9 @@ public class VenueServiceImpl implements VenueService {
         if (!venueRepository.existsById(id)) {
             throw new VenueNotFoundException("No se ha encontrado el lugar con id=" + id);
         }
-        if (showRepository.existsByEventId(id)) {
+        if (showRepository.existsByVenueId(id)) {
             throw new VenueHasDependenciesException("El lugar tiene shows asociados. No se puede eliminar.");
         }
-
         venueRepository.deleteById(id);
     }
 }

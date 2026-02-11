@@ -2,8 +2,22 @@ opencollection: 1.0.0
 
 info:
   name: ticketing
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
 
-request: {}
+request:
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzg3Njg3LCJleHAiOjE3NzA3OTEyODd9.UylYf1BMF5DisWaCWM4oIzT3Sx-xiXAsZ66NBno9hPA
 bundled: false
 extensions:
   ignore:

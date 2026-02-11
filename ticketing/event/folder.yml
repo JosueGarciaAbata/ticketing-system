@@ -4,6 +4,4 @@ info:
   seq: 1
 
 request:
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzQ5NTQ3LCJleHAiOjE3NzA3NTMxNDd9.kDdYhsW_Ew-ocPV1Qu40gznPsHV9dAfMGYenbvBHPRk
+  auth: inherit

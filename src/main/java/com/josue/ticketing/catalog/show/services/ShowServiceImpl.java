@@ -27,10 +27,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+// Faltaria un job que cambie a FINISHED el show cuando ya paso el endTime del momento actual.
+// endTime <= now ... show.status = FINISHED
 @Service
 @RequiredArgsConstructor
 public class ShowServiceImpl implements ShowService {

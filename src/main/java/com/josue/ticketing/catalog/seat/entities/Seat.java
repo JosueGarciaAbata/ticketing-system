@@ -1,14 +1,11 @@
 package com.josue.ticketing.catalog.seat.entities;
 
-import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.catalog.seat.enums.SeatCategory;
 import com.josue.ticketing.catalog.seat.enums.SeatStatus;
 import com.josue.ticketing.catalog.show.entities.Show;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +17,7 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "show_id", nullable = false)
     private Show show;
 

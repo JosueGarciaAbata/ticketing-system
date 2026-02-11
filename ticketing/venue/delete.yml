@@ -6,9 +6,7 @@ info:
 http:
   method: DELETE
   url: "{{host}}/api/v1/venues/1"
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzM3MDM2LCJleHAiOjE3NzA3NDA2MzZ9.mkvQa5UMtd8y6gSgoSS9TvVy6-ydEQ79ds4EvrrGdm0
+  auth: inherit
 
 settings:
   encodeUrl: true

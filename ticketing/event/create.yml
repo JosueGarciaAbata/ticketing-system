@@ -15,9 +15,7 @@ http:
         "category": "Concierto",
         "durationMinutes": 130
       }
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwic3ViIjoiam9zdWVnYXJjaWFAYWRtaW4uY29tIiwiaWF0IjoxNzcwNzUwMDY3LCJleHAiOjE3NzA3NTM2Njd9.467cHrJQZaHUOzeqDQsNIVfh2Z-OjjTZrKkbEu_J5Dg
+  auth: inherit
 
 settings:
   encodeUrl: true

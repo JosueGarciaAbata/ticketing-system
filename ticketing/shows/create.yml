@@ -5,14 +5,16 @@ info:
 
 http:
   method: POST
-  url: "{{host}}/api/v1/venues/"
+  url: "{{host}}/api/v1/shows/"
   body:
     type: json
     data: |-
       {
-        "cityId": 1,
-        "name": "Terminal del sur",
-        "capacity": 30
+        "eventId": 2,
+        "venueId": 2,
+        "capacity": 20,
+        "startTime": "2026-02-11T05:05:00.000Z",
+        "endTime": "2026-02-11T05:05:00.000Z"
       }
   auth: inherit
 
