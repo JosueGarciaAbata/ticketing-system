@@ -6,7 +6,7 @@ import com.josue.ticketing.catalog.event.dtos.EventUpdateRequest;
 import com.josue.ticketing.catalog.event.entities.Event;
 import com.josue.ticketing.catalog.event.exceps.EventNotFoundException;
 import com.josue.ticketing.catalog.event.repos.EventRepository;
-import com.josue.ticketing.catalog.show.exps.EventHasDependenciesException;
+import com.josue.ticketing.catalog.event.exceps.EventHasDependenciesException;
 import com.josue.ticketing.catalog.show.repos.ShowRepository;
 import com.josue.ticketing.config.AuthService;
 import com.josue.ticketing.user.entities.User;
@@ -84,7 +84,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (!eventRepository.existsById(id)) {
             throw new EventNotFoundException("Evento no encontrado con id=" + id);
         }

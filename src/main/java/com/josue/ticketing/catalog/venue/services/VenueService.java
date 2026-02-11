@@ -11,6 +11,6 @@ public interface VenueService {
     List<VenueResponse> findAll();
     VenueResponse create(VenueCreateRequest req);
     VenueResponse update(Integer id, VenueUpdateRequest req);
-    void delete(Integer id);
+    void deleteById(Integer id);
 
 }

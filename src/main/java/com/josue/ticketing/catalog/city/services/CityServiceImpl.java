@@ -89,7 +89,7 @@ public class CityServiceImpl implements CityService {
 
     @Transactional(readOnly = false)
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (!cityRepository.existsById(id)) {
             throw new CityNotFoundException("Ciudad no encontrada con id= " + id);
         }

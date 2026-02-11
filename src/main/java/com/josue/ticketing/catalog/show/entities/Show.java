@@ -40,4 +40,9 @@ public class Show {
     @Column(nullable = false, length = 30)
     private ShowStatus status;
 
+    @PrePersist
+    public void prePersist() {
+        this.status = ShowStatus.SCHEDULED;
+    }
+
 }

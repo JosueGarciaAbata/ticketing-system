@@ -5,11 +5,15 @@ import com.josue.ticketing.catalog.seat.entities.Seat;
 import com.josue.ticketing.catalog.show.entities.Show;
 import com.josue.ticketing.user.entities.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "bookings")
 public class Booking {
@@ -28,13 +32,6 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "show_id", nullable = false)
     private Show show;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "bookings_seats",
-                joinColumns = @JoinColumn(name = "booking_id"),
-                inverseJoinColumns = @JoinColumn(name = "seat_id"),
-                uniqueConstraints = @UniqueConstraint(columnNames = "seat_id"))
-    private Set<Seat> seats;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)

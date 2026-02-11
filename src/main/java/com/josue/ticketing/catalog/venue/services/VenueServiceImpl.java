@@ -64,7 +64,7 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         if (!venueRepository.existsById(id)) {
             throw new VenueNotFoundException("No se ha encontrado el lugar con id=" + id);
         }

@@ -11,6 +11,6 @@ public interface CityService {
     List<CityResponse> findAll();
     CityResponse create(CityCreateRequest req);
     CityResponse update(Integer id, CityUpdateRequest req);
-    void delete(Integer id);
+    void deleteById(Integer id);
 
 }

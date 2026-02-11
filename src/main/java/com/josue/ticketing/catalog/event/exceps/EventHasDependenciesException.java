@@ -1,4 +1,4 @@
-package com.josue.ticketing.catalog.show.exps;
+package com.josue.ticketing.catalog.event.exceps;
 
 public class EventHasDependenciesException extends RuntimeException {
 

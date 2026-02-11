@@ -41,7 +41,7 @@ public class CityController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        this.cityService.delete(id);
+        this.cityService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }

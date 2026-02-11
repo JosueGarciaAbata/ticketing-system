@@ -44,7 +44,7 @@ public class EventController {
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<EventResponse> delete(@PathVariable Integer id) {
-        eventService.delete(id);
+        eventService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 

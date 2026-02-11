@@ -34,7 +34,7 @@ public class VenueController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<VenueResponse> delete(@PathVariable Integer id) {
-        venueService.delete(id);
+        venueService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
