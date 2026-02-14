@@ -3,12 +3,15 @@ package com.josue.ticketing.booking.services;
 import com.josue.ticketing.booking.dtos.BookingCreateResponse;
 import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.booking.entities.BookingSeat;
+import com.josue.ticketing.booking.enums.BookingStatus;
+import com.josue.ticketing.booking.exps.BookingNotFoundException;
 import com.josue.ticketing.booking.exps.NoAvailableSeatsException;
 import com.josue.ticketing.booking.exps.SeatsAlreadyHeldException;
 import com.josue.ticketing.booking.redis.RedisSeatHoldService;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.repos.BookingSeatRepository;
 import com.josue.ticketing.catalog.seat.entities.Seat;
+import com.josue.ticketing.catalog.seat.enums.SeatStatus;
 import com.josue.ticketing.catalog.show.entities.Show;
 import com.josue.ticketing.catalog.show.exps.ShowNotFoundException;
 import com.josue.ticketing.catalog.show.repos.ShowRepository;
@@ -83,13 +86,51 @@ public class BookingServiceImpl implements  BookingService {
         );
     }
 
+    @Transactional
     @Override
-    public void confirm() {
+    public void confirm(UUID publicId) {
+        Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
+        if (booking.getStatus() != BookingStatus.ACTIVE) {
+            throw new IllegalStateException("Solo reservas activas pueden confirmarse, id= " + publicId.toString());
+        }
+        booking.setStatus(BookingStatus.CONFIRMED);
 
+        List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
+        List<Integer> seatsId = new ArrayList<>();
+        for (BookingSeat bookingSeat : bookingSeats) {
+            Seat seat = bookingSeat.getSeat();
+            seat.setStatus(SeatStatus.SOLD);
+            seatsId.add(seat.getId());
+        }
+
+        bookingRepository.save(booking);
+        bookingSeatRepository.saveAll(bookingSeats);
+
+        Integer showId =  booking.getShow().getId();
+        redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 
+    @Transactional
     @Override
-    public void cancel() {
+    public void cancel(UUID publicId, String reason) {
+        Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
+        if (booking.getStatus() != BookingStatus.ACTIVE) {
+            throw new IllegalStateException("Solo reservas activas pueden confirmarse, id= " + publicId.toString());
+        }
+        booking.setStatus(BookingStatus.CANCELED);
+        booking.setCancelReason(reason);
+        List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
+        List<Integer> seatsId = new ArrayList<>();
+        for (BookingSeat bookingSeat : bookingSeats) {
+            Seat seat = bookingSeat.getSeat();
+            seat.setStatus(SeatStatus.SOLD);
+            seatsId.add(seat.getId());
+        }
 
+        bookingRepository.save(booking);
+        bookingSeatRepository.saveAll(bookingSeats);
+
+        Integer showId =  booking.getShow().getId();
+        redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 }
