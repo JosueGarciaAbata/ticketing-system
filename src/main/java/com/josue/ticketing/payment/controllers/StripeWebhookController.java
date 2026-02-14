@@ -34,6 +34,7 @@ public class StripeWebhookController {
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Cannot read payload");
         }
+        logger.info("Payload: " + payload);
         String sigHeader = request.getHeader("Stripe-Signature");
 
         Event event;

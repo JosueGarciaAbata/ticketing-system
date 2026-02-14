@@ -49,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
         SessionCreateParams params = SessionCreateParams.builder()
                 .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("bookingPublicId", booking.getPublicId().toString()).build())
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(frontendUrl + "/ok")
+                .setSuccessUrl(frontendUrl + "/ok?session_id={CHECKOUT_SESSION_ID}")
                 .setCancelUrl(frontendUrl + "/cancel")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
