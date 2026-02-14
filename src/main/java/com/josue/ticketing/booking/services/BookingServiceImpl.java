@@ -7,6 +7,7 @@ import com.josue.ticketing.booking.enums.BookingStatus;
 import com.josue.ticketing.booking.exps.BookingNotFoundException;
 import com.josue.ticketing.booking.exps.NoAvailableSeatsException;
 import com.josue.ticketing.booking.exps.SeatsAlreadyHeldException;
+import com.josue.ticketing.booking.pk.BookingSeatId;
 import com.josue.ticketing.booking.redis.RedisSeatHoldService;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.repos.BookingSeatRepository;
@@ -84,9 +85,15 @@ public class BookingServiceImpl implements  BookingService {
 
         List<BookingSeat> bookingSeats = new ArrayList<>();
         for (Seat seat : validSeats) {
+            BookingSeatId bookingSeatId = new BookingSeatId();
             BookingSeat bookingSeat = new BookingSeat();
+
+            bookingSeatId.setSeatId(seat.getId());
+            bookingSeat.setBooking(booking);
+            bookingSeat.setId(bookingSeatId);
             bookingSeat.setBooking(booking);
             bookingSeat.setSeat(seat);
+
             bookingSeats.add(bookingSeat);
         }
 

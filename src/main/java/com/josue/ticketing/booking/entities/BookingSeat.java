@@ -16,11 +16,11 @@ public class BookingSeat {
     @EmbeddedId
     private BookingSeatId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("bookingId") // Necesario para decir que "la fk usa la pk"
     private Booking booking;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("seatId")
     private Seat seat;
 
