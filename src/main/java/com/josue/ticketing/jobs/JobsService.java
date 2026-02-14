@@ -9,6 +9,7 @@ import com.josue.ticketing.booking.services.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
@@ -22,7 +23,7 @@ public class JobsService {
     private final BookingService bookingService;
 
     @Scheduled(fixedRate = 60000)
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void expireBookings() {
         List<Booking> batch;
         do {

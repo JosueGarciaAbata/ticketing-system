@@ -49,9 +49,10 @@ public class StripeWebhookController {
         // Procesar evento
         switch (event.getType()) {
 
-            case "payment_intent.succeded":
+            case "payment_intent.succeeded":
             // El mejor caso, pago exitoso.
                 logger.info("Webhook succeeded=" + payload);
+                stripeWebhookService.handleExpiredBooking(event);
                 stripeWebhookService.handlePaymentIntentSucecceded(event);
                 break;
 

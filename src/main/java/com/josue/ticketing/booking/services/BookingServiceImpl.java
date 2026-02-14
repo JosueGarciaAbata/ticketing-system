@@ -41,6 +41,9 @@ public class BookingServiceImpl implements  BookingService {
     private final BookingSeatRepository bookingSeatRepository;
     private final RedisSeatHoldService redisSeatHoldService;
 
+    private final int ttlSeatHold = 480; // 8 minutos
+    private final int bookingExpiresAt = 300; // 5 minutos
+
     @Override
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
         Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
@@ -58,7 +61,7 @@ public class BookingServiceImpl implements  BookingService {
         List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
 
         UUID bookingPublicId = UUID.randomUUID();
-        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), 90);
+        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), ttlSeatHold);
         if (!seatsSuccessfullyHeld) {
             throw new SeatsAlreadyHeldException("Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
         }
@@ -79,7 +82,7 @@ public class BookingServiceImpl implements  BookingService {
         booking.setPublicId(bookingPublicId);
         booking.setShow(show);
         booking.setUser(user);
-        booking.setExpiresAt(ZonedDateTime.now().plusMinutes(1));
+        booking.setExpiresAt(ZonedDateTime.now().plusSeconds(bookingExpiresAt));
         bookingRepository.save(booking);
 
         List<BookingSeat> bookingSeats = new ArrayList<>();
@@ -105,7 +108,6 @@ public class BookingServiceImpl implements  BookingService {
         );
     }
 
-    @Transactional
     @Override
     public void confirm(UUID publicId) {
         Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
@@ -133,7 +135,6 @@ public class BookingServiceImpl implements  BookingService {
         redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 
-    @Transactional
     @Override
     public void cancel(UUID publicId, String reason) {
         Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
