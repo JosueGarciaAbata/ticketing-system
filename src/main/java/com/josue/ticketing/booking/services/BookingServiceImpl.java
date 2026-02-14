@@ -4,6 +4,8 @@ import com.josue.ticketing.booking.dtos.BookingCreateResponse;
 import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.booking.entities.BookingSeat;
 import com.josue.ticketing.booking.exps.NoAvailableSeatsException;
+import com.josue.ticketing.booking.exps.SeatsAlreadyHeldException;
+import com.josue.ticketing.booking.redis.RedisSeatHoldService;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.repos.BookingSeatRepository;
 import com.josue.ticketing.catalog.seat.entities.Seat;
@@ -19,10 +21,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class BookingServiceImpl implements  BookingService {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final BookingSeatRepository bookingSeatRepository;
+    private final RedisSeatHoldService redisSeatHoldService;
 
     @Transactional
     @Override
@@ -49,9 +50,20 @@ public class BookingServiceImpl implements  BookingService {
         Integer userId = authService.getUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
 
+        // Bloquear con redis
+        List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
+
+        UUID bookingPublicId = UUID.randomUUID();
+        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), 500);
+        if (!seatsSuccessfullyHeld) {
+            throw new SeatsAlreadyHeldException("Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
+        }
+
         Booking booking = new Booking();
+        booking.setPublicId(bookingPublicId);
         booking.setShow(show);
         booking.setUser(user);
+        booking.setExpiresAt(ZonedDateTime.now().plusMinutes(5));
         bookingRepository.save(booking);
 
         List<BookingSeat> bookingSeats = new ArrayList<>();

@@ -50,6 +50,5 @@ public class Booking {
     public void onPrePersist() {
         this.createdAt = ZonedDateTime.now();
         this.status = BookingStatus.ACTIVE;
-        this.expiresAt = ZonedDateTime.now().plusMinutes(5);
     }
 }
