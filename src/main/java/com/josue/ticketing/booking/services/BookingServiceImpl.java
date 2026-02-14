@@ -80,7 +80,7 @@ public class BookingServiceImpl implements  BookingService {
         bookingSeatRepository.saveAll(bookingSeats);
 
         return new BookingCreateResponse(
-                booking.getId(),
+                booking.getPublicId(),
                 showId,
                 booking.getStatus()
         );
@@ -119,6 +119,7 @@ public class BookingServiceImpl implements  BookingService {
         }
         booking.setStatus(BookingStatus.CANCELED);
         booking.setCancelReason(reason);
+
         List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
         List<Integer> seatsId = new ArrayList<>();
         for (BookingSeat bookingSeat : bookingSeats) {
