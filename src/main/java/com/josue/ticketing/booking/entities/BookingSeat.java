@@ -3,7 +3,11 @@ package com.josue.ticketing.booking.entities;
 import com.josue.ticketing.booking.pk.BookingSeatId;
 import com.josue.ticketing.catalog.seat.entities.Seat;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "bookings_seats")
 public class BookingSeat {

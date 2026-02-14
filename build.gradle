@@ -25,13 +25,15 @@ repositories {
 }
 
 dependencies {
-	implementation "com.stripe:stripe-java:31.3.0"
+	implementation "com.stripe:stripe-java:31.3.0" // Usa el formato snapshot de los webhook. No es compatible con thin.
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation "io.jsonwebtoken:jjwt-api:0.13.0"
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Abstrae la especificacion de Redis para que sea mas 'entendible'
+	implementation 'io.lettuce:lettuce-core:6.8.2.RELEASE' // Driver para Redis
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'

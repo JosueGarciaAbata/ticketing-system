@@ -1,6 +1,6 @@
 package com.josue.ticketing.payment.controllers;
 
-import com.josue.ticketing.payment.dtos.PaymentCreateRequest;
+import com.josue.ticketing.payment.dtos.BookingCreateRequest;
 
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
@@ -21,12 +21,12 @@ public class PaymentController {
 
     @PreAuthorize("hasAnyRole('CLIENT')")
     @PostMapping("/create-session")
-    public String createSession(@RequestBody PaymentCreateRequest req) throws Exception {
+    public String createSession(@RequestBody BookingCreateRequest req) throws Exception {
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("https://miapp.com/exito")
-                .setCancelUrl("https://miapp.com/cancelado")
+                .setSuccessUrl("")
+                .setCancelUrl("")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(5L)

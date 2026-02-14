@@ -1,10 +1,12 @@
 package com.josue.ticketing.booking.repos;
 
 import com.josue.ticketing.booking.entities.Booking;
+import com.josue.ticketing.catalog.seat.entities.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
@@ -23,5 +25,15 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             b.show.id = :showId
     """)
     List<Booking> findAllActiveBookingsByShowId(Integer showId);
+
+    // Contexto: necesario el id de los asientos que existan y esten disponibles. Todo lo demas se ignora.
+    @Query(value = """
+        SELECT s.id
+        FROM Seat s
+        WHERE s.id IN :seatsId AND s.status = 'AVAILABLE'
+    """)
+    Set<Seat> filterAvailableSeatIds(Set<Integer> seatsId);
+
+
 
 }
