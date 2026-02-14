@@ -3,10 +3,12 @@ package com.josue.ticketing;
 import com.stripe.Stripe;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.logging.Logger;
 
 
+@EnableScheduling
 @SpringBootApplication
 public class TicketingApplication {
 

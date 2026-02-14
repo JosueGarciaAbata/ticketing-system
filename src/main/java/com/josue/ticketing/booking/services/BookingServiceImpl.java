@@ -43,7 +43,6 @@ public class BookingServiceImpl implements  BookingService {
 
     @Override
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
-
         Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
         if (validSeats.isEmpty()) {
             throw new NoAvailableSeatsException("No hay asientos disponibles para reservar.");
@@ -59,7 +58,7 @@ public class BookingServiceImpl implements  BookingService {
         List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
 
         UUID bookingPublicId = UUID.randomUUID();
-        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), 60 * 5);
+        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), 90);
         if (!seatsSuccessfullyHeld) {
             throw new SeatsAlreadyHeldException("Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
         }
@@ -80,7 +79,7 @@ public class BookingServiceImpl implements  BookingService {
         booking.setPublicId(bookingPublicId);
         booking.setShow(show);
         booking.setUser(user);
-        booking.setExpiresAt(ZonedDateTime.now().plusMinutes(5));
+        booking.setExpiresAt(ZonedDateTime.now().plusMinutes(1));
         bookingRepository.save(booking);
 
         List<BookingSeat> bookingSeats = new ArrayList<>();

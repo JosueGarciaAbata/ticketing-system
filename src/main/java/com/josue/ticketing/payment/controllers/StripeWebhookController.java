@@ -34,7 +34,6 @@ public class StripeWebhookController {
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Cannot read payload");
         }
-        logger.info("Payload: " + payload);
         String sigHeader = request.getHeader("Stripe-Signature");
 
         Event event;
@@ -52,11 +51,13 @@ public class StripeWebhookController {
 
             case "payment_intent.succeded":
             // El mejor caso, pago exitoso.
-                stripeWebhookService.handleCheckoutSessionCompleted(event);
+                logger.info("Webhook succeeded=" + payload);
+                stripeWebhookService.handlePaymentIntentSucecceded(event);
                 break;
 
             case "payment_intent.payment_failed":
             // Este es cuando se declina la tarjeta por ejemplo.
+                logger.info("Payment failed=" + payload);
                 break;
 
             default:

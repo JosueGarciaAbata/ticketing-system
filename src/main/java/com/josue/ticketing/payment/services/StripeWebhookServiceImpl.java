@@ -16,7 +16,7 @@ public class StripeWebhookServiceImpl implements StripeWebhookService {
     private final BookingService bookingService;
 
     @Override
-    public void handleCheckoutSessionCompleted(Event event) {
+    public void handlePaymentIntentSucecceded(Event event) {
         PaymentIntent paymentIntent = (PaymentIntent) event.getData().getObject();
         String bookingPublicId = paymentIntent.getMetadata().get("bookingPublicId");
         bookingService.confirm(UUID.fromString(bookingPublicId));

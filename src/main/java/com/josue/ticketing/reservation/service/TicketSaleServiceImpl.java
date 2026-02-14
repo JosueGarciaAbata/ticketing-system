@@ -21,7 +21,6 @@ public class TicketSaleServiceImpl implements TicketSaleService {
     @Transactional()
     @Override
     public String reservate(TicketCreateRequest req) throws Exception {
-
         BookingCreateRequest bookingCreateRequest = new BookingCreateRequest(req.showId(), req.seatsId());
         BookingCreateResponse response = bookingService.create(bookingCreateRequest);
 
