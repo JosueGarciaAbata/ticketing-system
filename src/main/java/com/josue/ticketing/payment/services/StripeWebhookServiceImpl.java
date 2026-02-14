@@ -7,6 +7,7 @@ import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.services.BookingService;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.checkout.Session;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,8 @@ public class StripeWebhookServiceImpl implements StripeWebhookService {
         if (booking.getStatus().equals(BookingStatus.CANCELED)) {
             throw new IllegalStateException("La reserva expiro.");
         }
+
+        // TODO: Aqui puede ser posible hacer una llamada http para expirar la sesion directamente.
     }
 
     @Transactional(readOnly = false)

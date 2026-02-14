@@ -46,9 +46,14 @@ public class PaymentServiceImpl implements PaymentService {
         long unitAmount = 500;
         String productName = "Ticket para " + booking.getPublicId();
 
+        //  gestionar este punto, si se lanza una excepcion en el metodo que encapsula esto y no se crea la excepcion, si se guardan datos en la base, pero este objeto no se devuelve
+        // no hya uri, el cliente no sabe en donde pagar, pero si hay datos en la bd.
         SessionCreateParams params = SessionCreateParams.builder()
                 .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("bookingPublicId", booking.getPublicId().toString()).build())
+                .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("sessionId", "{CHECKOUT_SESSION_ID}").build())
                 .setMode(SessionCreateParams.Mode.PAYMENT)
+                .putMetadata("bookingPublicId", booking.getPublicId().toString())
+                .setExpiresAt((System.currentTimeMillis() / 1000L) + (30 * 60))
                 .setSuccessUrl(frontendUrl + "/ok?session_id={CHECKOUT_SESSION_ID}")
                 .setCancelUrl(frontendUrl + "/cancel")
                 .addLineItem(
