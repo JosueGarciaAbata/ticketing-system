@@ -18,14 +18,14 @@ public class TicketSaleServiceImpl implements TicketSaleService {
     private final PaymentService paymentService;
 
     @Override
-    public String reservate(TicketCreateRequest req) {
+    public String reservate(TicketCreateRequest req) throws Exception {
 
         BookingCreateRequest bookingCreateRequest = new BookingCreateRequest(req.showId(), req.seatsId());
         BookingCreateResponse response = bookingService.create(bookingCreateRequest);
 
         UUID bookingPublicId = response.bookingPublicId();
-        paymentService.createCheckoutSession(bookingPublicId);
+        String sessionUrl = paymentService.createCheckoutSession(bookingPublicId);
 
-        return "";
+        return sessionUrl;
     }
 }

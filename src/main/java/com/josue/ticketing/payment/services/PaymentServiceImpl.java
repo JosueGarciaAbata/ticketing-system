@@ -9,6 +9,7 @@ import com.josue.ticketing.payment.repos.PaymentRepository;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.UUID;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
+
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
@@ -39,14 +43,14 @@ public class PaymentServiceImpl implements PaymentService {
         List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
 
         int quantity = bookingSeats.size();
-        long unitAmount = 500; // 100 centavos un dolar;
+        long unitAmount = 500; // 100 centavos --> un dolar
         String productName = "Ticket para " + booking.getPublicId();
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .putMetadata("bookingPublicId", booking.getPublicId().toString())
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("")
-                .setCancelUrl("")
+                .setSuccessUrl(frontendUrl + "/ok")
+                .setCancelUrl(frontendUrl + "/cancel")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity((long) quantity)
@@ -66,7 +70,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         Session session = Session.create(params);
-
         return session.getUrl();
     }
 }

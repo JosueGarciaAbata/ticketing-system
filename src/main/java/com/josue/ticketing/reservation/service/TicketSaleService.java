@@ -4,6 +4,6 @@ import com.josue.ticketing.reservation.dtos.TicketCreateRequest;
 
 public interface TicketSaleService {
 
-    String reservate(TicketCreateRequest req);
+    String reservate(TicketCreateRequest req) throws Exception;
 
 }
