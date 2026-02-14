@@ -48,6 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .putMetadata("bookingPublicId", booking.getPublicId().toString())
+                .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("bookingPublicId", booking.getPublicId().toString()).build())
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(frontendUrl + "/ok")
                 .setCancelUrl(frontendUrl + "/cancel")

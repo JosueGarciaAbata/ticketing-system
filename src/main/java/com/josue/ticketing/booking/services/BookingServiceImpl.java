@@ -59,7 +59,7 @@ public class BookingServiceImpl implements  BookingService {
         List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
 
         UUID bookingPublicId = UUID.randomUUID();
-        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), 500);
+        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), 60 * 5);
         if (!seatsSuccessfullyHeld) {
             throw new SeatsAlreadyHeldException("Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
         }
@@ -110,6 +110,10 @@ public class BookingServiceImpl implements  BookingService {
     @Override
     public void confirm(UUID publicId) {
         Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
+        if (booking.getExpiresAt().isBefore(ZonedDateTime.now())) {
+            throw new IllegalStateException("Reserva expiarad con id= " + publicId.toString());
+        }
+
         if (booking.getStatus() != BookingStatus.ACTIVE) {
             throw new IllegalStateException("Solo reservas activas pueden confirmarse, id= " + publicId.toString());
         }
@@ -148,7 +152,7 @@ public class BookingServiceImpl implements  BookingService {
         }
 
         bookingRepository.save(booking);
-        bookingSeatRepository.saveAll(bookingSeats);
+        bookingSeatRepository.deleteAll(bookingSeats);
 
         Integer showId =  booking.getShow().getId();
         redisSeatHoldService.releaseSeats(showId, seatsId);
