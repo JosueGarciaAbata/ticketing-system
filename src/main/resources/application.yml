@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      repositories:
+        enabled: false
   application:
     name: ticketing
   datasource:
@@ -12,7 +16,7 @@ spring:
         default_schema: ${DB_SCHEMA:public}
     hibernate:
       ddl-auto: validate
-
+    open-in-view: false
 jwt:
   secret: ${SECRET_KEY:256-bit-secret-key-here-make-it-long-and-random}
   expiration: 3600000
@@ -20,3 +24,4 @@ jwt:
 logging:
   level:
     org.springframework.security: DEBUG
+    web: debug

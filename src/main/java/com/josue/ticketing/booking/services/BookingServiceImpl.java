@@ -23,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -38,7 +40,6 @@ public class BookingServiceImpl implements  BookingService {
     private final BookingSeatRepository bookingSeatRepository;
     private final RedisSeatHoldService redisSeatHoldService;
 
-    @Transactional
     @Override
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
 
@@ -61,6 +62,18 @@ public class BookingServiceImpl implements  BookingService {
         if (!seatsSuccessfullyHeld) {
             throw new SeatsAlreadyHeldException("Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
         }
+
+        // Registrar una sincronizacion por si algo falla.
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCompletion(int status) {
+                        if (status == STATUS_ROLLED_BACK) {
+                            redisSeatHoldService.releaseSeats(showId, validSeatsId);
+                        }
+                    }
+                }
+        );
 
         Booking booking = new Booking();
         booking.setPublicId(bookingPublicId);
@@ -124,7 +137,6 @@ public class BookingServiceImpl implements  BookingService {
         List<Integer> seatsId = new ArrayList<>();
         for (BookingSeat bookingSeat : bookingSeats) {
             Seat seat = bookingSeat.getSeat();
-            seat.setStatus(SeatStatus.SOLD);
             seatsId.add(seat.getId());
         }
 

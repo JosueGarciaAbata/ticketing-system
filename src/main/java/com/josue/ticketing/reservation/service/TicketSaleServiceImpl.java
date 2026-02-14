@@ -7,6 +7,7 @@ import com.josue.ticketing.payment.services.PaymentService;
 import com.josue.ticketing.reservation.dtos.TicketCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class TicketSaleServiceImpl implements TicketSaleService {
     private final BookingService bookingService;
     private final PaymentService paymentService;
 
+    @Transactional()
     @Override
     public String reservate(TicketCreateRequest req) throws Exception {
 

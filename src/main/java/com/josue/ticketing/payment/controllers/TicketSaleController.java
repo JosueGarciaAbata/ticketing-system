@@ -4,6 +4,7 @@ import com.josue.ticketing.reservation.dtos.TicketCreateRequest;
 import com.josue.ticketing.reservation.service.TicketSaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ public class TicketSaleController {
 
     private final TicketSaleService ticketSaleService;
 
+    @PreAuthorize("hasAnyRole('CLIENT')")
     @PostMapping("/")
     public ResponseEntity<String> saleTicket(@RequestBody TicketCreateRequest req) {
         try {

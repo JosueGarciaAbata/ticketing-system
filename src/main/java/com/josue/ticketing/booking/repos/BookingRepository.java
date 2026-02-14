@@ -30,7 +30,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     // Contexto: necesario el id de los asientos que existan y esten disponibles. Todo lo demas se ignora.
     @Query(value = """
-        SELECT s.id
+        SELECT s
         FROM Seat s
         WHERE s.id IN :seatsId AND s.status = 'AVAILABLE'
     """)
