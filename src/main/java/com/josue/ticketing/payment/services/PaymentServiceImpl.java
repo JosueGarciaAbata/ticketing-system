@@ -43,11 +43,10 @@ public class PaymentServiceImpl implements PaymentService {
         List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
 
         int quantity = bookingSeats.size();
-        long unitAmount = 500; // 100 centavos --> un dolar
+        long unitAmount = 500;
         String productName = "Ticket para " + booking.getPublicId();
 
         SessionCreateParams params = SessionCreateParams.builder()
-                .putMetadata("bookingPublicId", booking.getPublicId().toString())
                 .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("bookingPublicId", booking.getPublicId().toString()).build())
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(frontendUrl + "/ok")

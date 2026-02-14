@@ -1,10 +1,12 @@
 package com.josue.ticketing.booking.repos;
 
 import com.josue.ticketing.booking.entities.Booking;
+import com.josue.ticketing.booking.enums.BookingStatus;
 import com.josue.ticketing.catalog.seat.entities.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,4 +40,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
 
     Optional<Booking> findByPublicId(UUID publicId);
+
+    List<Booking> findTop100ByStatusAndExpiresAtBefore(BookingStatus status, ZonedDateTime expiresAtBefore);
 }

@@ -50,14 +50,13 @@ public class StripeWebhookController {
         // Procesar evento
         switch (event.getType()) {
 
-            // El mejor caso, pago exitoso.
             case "payment_intent.succeded":
-                handleCheckoutCompleted(event);
+            // El mejor caso, pago exitoso.
+                stripeWebhookService.handleCheckoutSessionCompleted(event);
                 break;
 
-                // Este es cuando se declina la tarjeta por ejemplo.
             case "payment_intent.payment_failed":
-                //
+            // Este es cuando se declina la tarjeta por ejemplo.
                 break;
 
             default:
@@ -65,15 +64,5 @@ public class StripeWebhookController {
         }
 
         return ResponseEntity.ok("Received");
-    }
-
-    private void handlePaymentFailed(Event event) {
-        logger.info("Payment failed");
-        stripeWebhookService.handlePaymentFailed(event);
-    }
-
-    private void handleCheckoutCompleted(Event event) {
-        logger.info("Checkout completed");
-        stripeWebhookService.handleCheckoutSessionCompleted(event);
     }
 }

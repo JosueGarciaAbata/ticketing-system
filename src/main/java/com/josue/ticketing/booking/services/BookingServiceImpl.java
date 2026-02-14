@@ -157,4 +157,33 @@ public class BookingServiceImpl implements  BookingService {
         Integer showId =  booking.getShow().getId();
         redisSeatHoldService.releaseSeats(showId, seatsId);
     }
+
+    @Override
+    public void expire(UUID publicId) {
+        Booking booking = bookingRepository.findByPublicId(publicId).orElse(null);
+        if (booking == null) {
+            return;
+        }
+
+        if (booking.getStatus() != BookingStatus.ACTIVE) {
+            return;
+        }
+
+        booking.setStatus(BookingStatus.CANCELED);
+        booking.setCancelReason("timeout");
+
+        List<BookingSeat> bookingSeats =
+                bookingSeatRepository.findByBookingId(booking.getId());
+
+        List<Integer> seatIds = bookingSeats.stream()
+                .map(bs -> bs.getSeat().getId())
+                .toList();
+
+        bookingRepository.save(booking);
+        bookingSeatRepository.deleteAll(bookingSeats);
+        redisSeatHoldService.releaseSeats(
+                booking.getShow().getId(),
+                seatIds
+        );
+    }
 }

@@ -10,5 +10,6 @@ public interface BookingService {
     BookingCreateResponse create(BookingCreateRequest bookingCreateRequest);
     void confirm(UUID publicId);
     void cancel(UUID publicId, String reason);
+    void expire(UUID publicId);
 
 }
