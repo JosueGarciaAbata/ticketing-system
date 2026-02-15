@@ -3,11 +3,15 @@ package com.josue.ticketing.payment.entities;
 import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.payment.enums.PaymentStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "payments", uniqueConstraints = @UniqueConstraint(columnNames = {"provider", "provider_reference"}))
 public class Payment {

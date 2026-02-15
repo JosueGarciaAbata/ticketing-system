@@ -4,18 +4,18 @@ import com.josue.ticketing.booking.dtos.BookingCreateResponse;
 import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.booking.entities.BookingSeat;
 import com.josue.ticketing.booking.enums.BookingStatus;
-import com.josue.ticketing.booking.exps.BookingNotFoundException;
-import com.josue.ticketing.booking.exps.NoAvailableSeatsException;
-import com.josue.ticketing.booking.exps.SeatsAlreadyHeldException;
-import com.josue.ticketing.booking.pk.BookingSeatId;
+import com.josue.ticketing.booking.exceptions.BookingNotFoundException;
+import com.josue.ticketing.booking.exceptions.NoAvailableSeatsException;
+import com.josue.ticketing.booking.exceptions.SeatsAlreadyHeldException;
+import com.josue.ticketing.booking.embbeded.BookingSeatId;
 import com.josue.ticketing.booking.redis.RedisSeatHoldService;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.repos.BookingSeatRepository;
-import com.josue.ticketing.catalog.seat.entities.Seat;
-import com.josue.ticketing.catalog.seat.enums.SeatStatus;
-import com.josue.ticketing.catalog.show.entities.Show;
-import com.josue.ticketing.catalog.show.exps.ShowNotFoundException;
-import com.josue.ticketing.catalog.show.repos.ShowRepository;
+import com.josue.ticketing.catalog.seats.entities.Seat;
+import com.josue.ticketing.catalog.seats.enums.SeatStatus;
+import com.josue.ticketing.catalog.shows.entities.Show;
+import com.josue.ticketing.catalog.shows.exps.ShowNotFoundException;
+import com.josue.ticketing.catalog.shows.repos.ShowRepository;
 import com.josue.ticketing.config.AuthService;
 import com.josue.ticketing.payment.dtos.BookingCreateRequest;
 import com.josue.ticketing.user.entities.User;
@@ -23,7 +23,6 @@ import com.josue.ticketing.user.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -32,7 +31,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServiceImpl implements  BookingService {
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final ShowRepository showRepository;
@@ -52,18 +51,22 @@ public class BookingServiceImpl implements  BookingService {
         }
 
         Integer showId = bookingCreateRequest.showId();
-        Show show = showRepository.findById(showId).orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
+        Show show = showRepository.findById(showId)
+                .orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
 
         Integer userId = authService.getUserId();
-        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
 
         // Bloquear con redis
         List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
 
         UUID bookingPublicId = UUID.randomUUID();
-        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(), ttlSeatHold);
+        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(),
+                ttlSeatHold);
         if (!seatsSuccessfullyHeld) {
-            throw new SeatsAlreadyHeldException("Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
+            throw new SeatsAlreadyHeldException(
+                    "Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
         }
 
         // Registrar una sincronizacion por si algo falla.
@@ -75,8 +78,7 @@ public class BookingServiceImpl implements  BookingService {
                             redisSeatHoldService.releaseSeats(showId, validSeatsId);
                         }
                     }
-                }
-        );
+                });
 
         Booking booking = new Booking();
         booking.setPublicId(bookingPublicId);
@@ -104,13 +106,13 @@ public class BookingServiceImpl implements  BookingService {
         return new BookingCreateResponse(
                 booking.getPublicId(),
                 showId,
-                booking.getStatus()
-        );
+                booking.getStatus());
     }
 
     @Override
     public void confirm(UUID publicId) {
-        Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
+        Booking booking = bookingRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
         if (booking.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new IllegalStateException("Reserva expiarad con id= " + publicId.toString());
         }
@@ -131,13 +133,14 @@ public class BookingServiceImpl implements  BookingService {
         bookingRepository.save(booking);
         bookingSeatRepository.saveAll(bookingSeats);
 
-        Integer showId =  booking.getShow().getId();
+        Integer showId = booking.getShow().getId();
         redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 
     @Override
     public void cancel(UUID publicId, String reason) {
-        Booking booking = bookingRepository.findByPublicId(publicId).orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
+        Booking booking = bookingRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
         if (booking.getStatus() != BookingStatus.ACTIVE) {
             throw new IllegalStateException("Solo reservas activas pueden confirmarse, id= " + publicId.toString());
         }
@@ -154,7 +157,7 @@ public class BookingServiceImpl implements  BookingService {
         bookingRepository.save(booking);
         bookingSeatRepository.deleteAll(bookingSeats);
 
-        Integer showId =  booking.getShow().getId();
+        Integer showId = booking.getShow().getId();
         redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 
@@ -172,8 +175,7 @@ public class BookingServiceImpl implements  BookingService {
         booking.setStatus(BookingStatus.CANCELED);
         booking.setCancelReason("timeout");
 
-        List<BookingSeat> bookingSeats =
-                bookingSeatRepository.findByBookingId(booking.getId());
+        List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
 
         List<Integer> seatIds = bookingSeats.stream()
                 .map(bs -> bs.getSeat().getId())
@@ -183,7 +185,6 @@ public class BookingServiceImpl implements  BookingService {
         bookingSeatRepository.deleteAll(bookingSeats);
         redisSeatHoldService.releaseSeats(
                 booking.getShow().getId(),
-                seatIds
-        );
+                seatIds);
     }
 }

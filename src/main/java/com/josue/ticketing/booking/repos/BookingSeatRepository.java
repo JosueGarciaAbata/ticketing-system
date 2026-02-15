@@ -1,7 +1,7 @@
 package com.josue.ticketing.booking.repos;
 
 import com.josue.ticketing.booking.entities.BookingSeat;
-import com.josue.ticketing.booking.pk.BookingSeatId;
+import com.josue.ticketing.booking.embbeded.BookingSeatId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

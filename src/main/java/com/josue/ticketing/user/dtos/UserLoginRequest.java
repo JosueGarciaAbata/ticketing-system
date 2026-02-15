@@ -1,4 +1,10 @@
 package com.josue.ticketing.user.dtos;
 
-public record UserLoginRequest(String email, String password) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record UserLoginRequest(
+    @NotBlank @Email @Size(max = 255) String email,
+    @NotBlank @Size(max = 255) String password) {
 }

@@ -1,7 +1,7 @@
 package com.josue.ticketing.booking.entities;
 
-import com.josue.ticketing.booking.pk.BookingSeatId;
-import com.josue.ticketing.catalog.seat.entities.Seat;
+import com.josue.ticketing.booking.embbeded.BookingSeatId;
+import com.josue.ticketing.catalog.seats.entities.Seat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

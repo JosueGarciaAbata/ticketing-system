@@ -1,15 +1,13 @@
 package com.josue.ticketing.booking.entities;
 
 import com.josue.ticketing.booking.enums.BookingStatus;
-import com.josue.ticketing.catalog.seat.entities.Seat;
-import com.josue.ticketing.catalog.show.entities.Show;
+import com.josue.ticketing.catalog.shows.entities.Show;
 import com.josue.ticketing.user.entities.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter

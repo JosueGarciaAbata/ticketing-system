@@ -3,7 +3,6 @@ package com.josue.ticketing.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.josue.ticketing.user.dtos.UserDetailsDto;
 import com.josue.ticketing.user.dtos.UserLoginRequest;
-import com.josue.ticketing.user.entities.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,25 +32,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
-        UserLoginRequest user = null;
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
         String email = null;
         String password = null;
         try {
-            UserLoginRequest userLoginRequest = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
+            UserLoginRequest userLoginRequest = new ObjectMapper().readValue(request.getInputStream(),
+                    UserLoginRequest.class);
             email = userLoginRequest.email();
             password = userLoginRequest.password();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
+                password);
         return super.getAuthenticationManager().authenticate(authenticationToken);
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+            Authentication authResult) throws IOException, ServletException {
         // Spring Security User
         UserDetails user = (UserDetails) authResult.getPrincipal();
         String username = user.getUsername();
@@ -66,7 +67,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Map<String, String> body = new HashMap<>();
         body.put("token", token);
-        body.put("email",  username);
+        body.put("email", username);
         body.put("message", "Has iniciado sesino con exito " + username);
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
@@ -75,7 +76,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException failed) throws IOException, ServletException {
         Map<String, Object> body = new HashMap<>();
         body.put("message", "Credenciales invalidas.");
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));

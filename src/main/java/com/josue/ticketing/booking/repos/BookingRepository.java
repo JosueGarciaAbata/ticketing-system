@@ -2,7 +2,7 @@ package com.josue.ticketing.booking.repos;
 
 import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.booking.enums.BookingStatus;
-import com.josue.ticketing.catalog.seat.entities.Seat;
+import com.josue.ticketing.catalog.seats.entities.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

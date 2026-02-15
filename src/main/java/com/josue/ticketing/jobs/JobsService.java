@@ -1,10 +1,8 @@
 package com.josue.ticketing.jobs;
 
 import com.josue.ticketing.booking.entities.Booking;
-import com.josue.ticketing.booking.entities.BookingSeat;
 import com.josue.ticketing.booking.enums.BookingStatus;
 import com.josue.ticketing.booking.repos.BookingRepository;
-import com.josue.ticketing.booking.repos.BookingSeatRepository;
 import com.josue.ticketing.booking.services.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
