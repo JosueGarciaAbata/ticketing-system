@@ -57,11 +57,4 @@ public class StripeWebhookServiceImpl implements StripeWebhookService {
         bookingService.confirm(UUID.fromString(bookingPublicId));
         paymentRepository.save(payment);
     }
-
-    @Transactional(readOnly = false)
-    @Override
-    public void handlePaymentFailed(Event event) {
-        // TODO: Hacer algo si el pago falla (por ejemplo lanzar una excepcion al
-        // usuario)
-    }
 }

@@ -55,11 +55,6 @@ public class StripeWebhookController {
                 stripeWebhookService.handlePaymentIntentSucecceded(event);
                 break;
 
-            case "payment_intent.payment_failed":
-                // Este es cuando se declina la tarjeta por ejemplo.
-                logger.info("Payment failed=" + payload);
-                break;
-
             default:
                 // ignorar otros
         }

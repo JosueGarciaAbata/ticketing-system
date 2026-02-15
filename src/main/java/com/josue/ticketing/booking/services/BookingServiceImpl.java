@@ -18,6 +18,9 @@ import com.josue.ticketing.catalog.shows.exps.ShowNotFoundException;
 import com.josue.ticketing.catalog.shows.repos.ShowRepository;
 import com.josue.ticketing.config.AuthService;
 import com.josue.ticketing.payment.dtos.BookingCreateRequest;
+import com.josue.ticketing.payment.entities.Payment;
+import com.josue.ticketing.payment.enums.PaymentStatus;
+import com.josue.ticketing.payment.repos.PaymentRepository;
 import com.josue.ticketing.user.entities.User;
 import com.josue.ticketing.user.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +45,7 @@ public class BookingServiceImpl implements BookingService {
 
     private final int ttlSeatHold = 480; // 8 minutos
     private final int bookingExpiresAt = 300; // 5 minutos
+    private final PaymentRepository paymentRepository;
 
     @Override
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
@@ -175,6 +179,12 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.CANCELED);
         booking.setCancelReason("timeout");
 
+        Payment failedPayment = new Payment();
+        failedPayment.setBooking(booking);
+        failedPayment.setProvider("SYSTEM");
+        failedPayment.setProviderReference("bk_" + publicId.toString());
+        failedPayment.setStatus(PaymentStatus.FAILED);
+
         List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
 
         List<Integer> seatIds = bookingSeats.stream()
@@ -183,6 +193,7 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(booking);
         bookingSeatRepository.deleteAll(bookingSeats);
+        paymentRepository.save(failedPayment);
         redisSeatHoldService.releaseSeats(
                 booking.getShow().getId(),
                 seatIds);
