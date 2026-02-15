@@ -7,7 +7,6 @@ import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.services.BookingService;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
-import com.stripe.model.checkout.Session;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

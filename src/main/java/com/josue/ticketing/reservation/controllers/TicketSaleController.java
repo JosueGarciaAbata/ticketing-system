@@ -1,21 +1,15 @@
-package com.josue.ticketing.payment.controllers;
+package com.josue.ticketing.reservation.controllers;
 
-import com.josue.ticketing.booking.entities.Booking;
-import com.josue.ticketing.booking.enums.BookingStatus;
 import com.josue.ticketing.booking.repos.BookingRepository;
-import com.josue.ticketing.payment.dtos.PaymentStatusResponse;
+import com.josue.ticketing.reservation.dtos.PaymentStatusResponse;
 import com.josue.ticketing.reservation.dtos.TicketCreateRequest;
 import com.josue.ticketing.reservation.service.TicketSaleService;
-import com.stripe.exception.StripeException;
-import com.stripe.model.checkout.Session;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/ticket-sale")

@@ -7,8 +7,8 @@ import com.josue.ticketing.booking.exps.BookingNotFoundException;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.services.BookingService;
 import com.josue.ticketing.payment.dtos.BookingCreateRequest;
-import com.josue.ticketing.payment.dtos.PaymentStatusResponse;
-import com.josue.ticketing.payment.exps.PaymentSessionException;
+import com.josue.ticketing.reservation.dtos.PaymentStatusResponse;
+import com.josue.ticketing.reservation.exps.PaymentSessionException;
 import com.josue.ticketing.payment.services.PaymentService;
 import com.josue.ticketing.reservation.dtos.TicketCreateRequest;
 import com.stripe.exception.StripeException;
@@ -51,6 +51,10 @@ public class TicketSaleServiceImpl implements TicketSaleService {
 
         String paymentStatus = session.getPaymentStatus();
         String bookingPublicId = session.getMetadata().get("bookingPublicId");
+
+        if (bookingPublicId == null) {
+            throw new IllegalStateException("No se pudo recuperar la booking publicid.");
+        }
 
         Booking booking = bookingRepository
                 .findByPublicId(UUID.fromString(bookingPublicId))

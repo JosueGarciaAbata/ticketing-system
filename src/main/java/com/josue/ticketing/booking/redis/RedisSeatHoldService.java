@@ -1,6 +1,6 @@
 package com.josue.ticketing.booking.redis;
 
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +9,10 @@ import java.util.List;
 @Service
 public class RedisSeatHoldService {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
     private final DefaultRedisScript<Long> holdScript;
 
-    public RedisSeatHoldService(RedisTemplate<String, String> redisTemplate) {
+    public RedisSeatHoldService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
 
         this.holdScript = new DefaultRedisScript<>();

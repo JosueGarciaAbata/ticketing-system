@@ -1,6 +1,6 @@
 package com.josue.ticketing.reservation.service;
 
-import com.josue.ticketing.payment.dtos.PaymentStatusResponse;
+import com.josue.ticketing.reservation.dtos.PaymentStatusResponse;
 import com.josue.ticketing.reservation.dtos.TicketCreateRequest;
 
 public interface TicketSaleService {

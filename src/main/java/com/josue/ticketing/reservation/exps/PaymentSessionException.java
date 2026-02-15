@@ -1,4 +1,4 @@
-package com.josue.ticketing.payment.exps;
+package com.josue.ticketing.reservation.exps;
 
 public class PaymentSessionException extends RuntimeException{
 
