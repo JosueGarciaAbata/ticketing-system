@@ -32,8 +32,6 @@ public class StripeWebhookServiceImpl implements StripeWebhookService {
         if (booking.getStatus().equals(BookingStatus.CANCELED)) {
             throw new IllegalStateException("La reserva expiro.");
         }
-
-        // TODO: Aqui puede ser posible hacer una llamada http para expirar la sesion directamente.
     }
 
     @Transactional(readOnly = false)

@@ -21,14 +21,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
 
-    private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final BookingSeatRepository bookingSeatRepository;
 
-    public  PaymentServiceImpl(PaymentRepository paymentRepository,
-                               BookingRepository bookingRepository,
+    public  PaymentServiceImpl(BookingRepository bookingRepository,
                                BookingSeatRepository bookingSeatRepository) {
-        this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.bookingSeatRepository = bookingSeatRepository;
         Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
@@ -46,8 +43,6 @@ public class PaymentServiceImpl implements PaymentService {
         long unitAmount = 500;
         String productName = "Ticket para " + booking.getPublicId();
 
-        //  gestionar este punto, si se lanza una excepcion en el metodo que encapsula esto y no se crea la excepcion, si se guardan datos en la base, pero este objeto no se devuelve
-        // no hya uri, el cliente no sabe en donde pagar, pero si hay datos en la bd.
         SessionCreateParams params = SessionCreateParams.builder()
                 .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("bookingPublicId", booking.getPublicId().toString()).build())
                 .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().putMetadata("sessionId", "{CHECKOUT_SESSION_ID}").build())
