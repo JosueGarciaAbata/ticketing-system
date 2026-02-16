@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 
@@ -16,6 +17,7 @@ public class TicketingApplication {
 
 	public static void main(String[] args) {
 		logger.info("Stripe API VERSION: " + Stripe.API_VERSION);
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		SpringApplication.run(TicketingApplication.class, args);
 	}
 
