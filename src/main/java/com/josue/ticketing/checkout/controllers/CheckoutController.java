@@ -20,7 +20,7 @@ import com.josue.ticketing.checkout.service.CheckoutService;
 public class CheckoutController {
     private final CheckoutService checkoutService;
 
-    @PreAuthorize("hasAnyRole('CLIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'CLIENT')")
     @PostMapping("/")
     public ResponseEntity<StartCheckoutResponse> startCheckout(@Valid @RequestBody CheckoutCreateRequest req) {
         String uri = checkoutService.startCheckout(req);
@@ -28,7 +28,7 @@ public class CheckoutController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PreAuthorize("hasAnyRole('CLIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'CLIENT')")
     @GetMapping({ "/status", "/payment-status" })
     public ResponseEntity<CheckoutStatusResponse> getCheckout(
             @NotBlank @RequestParam("session_id") String sessionId) {
@@ -36,7 +36,7 @@ public class CheckoutController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PreAuthorize("hasAnyRole('CLIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'CLIENT')")
     @RequestMapping(value = "/expire", method = { RequestMethod.GET, RequestMethod.POST })
     public ResponseEntity<String> expireCheckout(@NotBlank @RequestParam("session_id") String sessionId) {
         checkoutService.expireCheckoutSession(sessionId);

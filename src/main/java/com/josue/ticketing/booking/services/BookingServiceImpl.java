@@ -14,6 +14,7 @@ import com.josue.ticketing.booking.repos.BookingSeatRepository;
 import com.josue.ticketing.catalog.seats.entities.Seat;
 import com.josue.ticketing.catalog.seats.enums.SeatStatus;
 import com.josue.ticketing.catalog.shows.entities.Show;
+import com.josue.ticketing.catalog.shows.enums.ShowStatus;
 import com.josue.ticketing.catalog.shows.exps.ShowNotFoundException;
 import com.josue.ticketing.catalog.shows.repos.ShowRepository;
 import com.josue.ticketing.config.AuthService;
@@ -57,6 +58,10 @@ public class BookingServiceImpl implements BookingService {
         Integer showId = bookingCreateRequest.showId();
         Show show = showRepository.findById(showId)
                 .orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
+
+        if (show.getStatus().equals(ShowStatus.CANCELED) || show.getStatus().equals(ShowStatus.FINISHED)) {
+            throw new IllegalStateException("El show ha sido cancelado/terminado, no se puede reservar. Id=" + showId);
+        }
 
         Integer userId = authService.getUserId();
         User user = userRepository.findById(userId)

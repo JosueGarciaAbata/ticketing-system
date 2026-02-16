@@ -4,6 +4,7 @@ import com.josue.ticketing.booking.entities.Booking;
 import com.josue.ticketing.booking.enums.BookingStatus;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.services.BookingService;
+import com.josue.ticketing.catalog.shows.repos.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class JobsService {
 
     private final BookingRepository bookingRepository;
     private final BookingService bookingService;
+    private final ShowRepository showRepository;
 
     @Scheduled(fixedRate = 60000)
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -28,5 +30,11 @@ public class JobsService {
             batch = bookingRepository.findTop100ByStatusAndExpiresAtBefore((BookingStatus.ACTIVE), ZonedDateTime.now());
             batch.forEach(booking -> bookingService.expire(booking.getPublicId()));
         } while (!batch.isEmpty());
+    }
+
+    @Scheduled(fixedRate = 3600000)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void markShowsAsFinished() {
+        showRepository.markAsFinished();
     }
 }

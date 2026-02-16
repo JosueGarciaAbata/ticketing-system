@@ -58,7 +58,8 @@ public class ShowServiceImpl implements ShowService {
                 show.getVenue().getId(),
                 show.getCapacity(),
                 show.getStartTime(),
-                show.getEndTime()))
+                show.getEndTime(),
+                        show.getStatus()))
                 .toList();
     }
 
@@ -75,7 +76,8 @@ public class ShowServiceImpl implements ShowService {
                 show.getVenue().getId(),
                 show.getCapacity(),
                 show.getStartTime(),
-                show.getEndTime()
+                show.getEndTime(),
+                show.getStatus()
         );
     }
 
@@ -169,7 +171,8 @@ public class ShowServiceImpl implements ShowService {
                 show.getVenue().getId(),
                 show.getCapacity(),
                 show.getStartTime(),
-                show.getEndTime()
+                show.getEndTime(),
+                show.getStatus()
         );
     }
 

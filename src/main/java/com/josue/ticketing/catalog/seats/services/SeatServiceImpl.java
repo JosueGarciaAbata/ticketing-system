@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,14 +65,13 @@ public class SeatServiceImpl implements  SeatService {
     }
 
     private BigDecimal getPriceByCategory(Integer showId, SeatCategory category) {
-        Map<SeatCategory, BigDecimal> priceByCategory =
-                seatPricingRepository.findAllByShowId(showId)
-                        .stream()
-                        .collect(Collectors.toMap(
-                                SeatPricing::getCategory,
-                                SeatPricing::getPrice
-                        ));
+        Map<SeatCategory, BigDecimal> map = new HashMap<>();
+        List<SeatPricing> pricingList = seatPricingRepository.findAllByShowId(showId);
 
-        return priceByCategory.get(category);
+        for (SeatPricing pricing : pricingList) {
+            map.put(pricing.getCategory(), pricing.getPrice());
+        }
+
+        return map.get(category);
     }
 }
