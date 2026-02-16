@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dfdb6ae2-cc6f-4031-afcf-9a2e20329748" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env-example" beforeDir="false" afterPath="$PROJECT_DIR$/application/.env-example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/application/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/application/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/TicketingApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/dtos/BookingCreateResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/embbeded/BookingSeatId.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/entities/Booking.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/entities/BookingSeat.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/enums/BookingStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/exceptions/BookingExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/exceptions/BookingNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/exceptions/NoAvailableSeatsException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/exceptions/SeatsAlreadyHeldException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/redis/RedisSeatHoldService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/repos/BookingRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/repos/BookingSeatRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/services/BookingService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/booking/services/BookingServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/controllers/CityController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/dtos/CityCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/dtos/CityResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/dtos/CityUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/entities/City.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/exceptions/CityAlreadyExistsException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/exceptions/CityExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/exceptions/CityHasDependenciesException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/exceptions/CityNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/repos/CityRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/services/CityService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/cities/services/CityServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/controllers/EventController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/dtos/EventCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/dtos/EventResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/dtos/EventUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/entities/Event.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/exceptions/EventExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/exceptions/EventHasDependenciesException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/exceptions/EventNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/repos/EventRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/services/EventService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/events/services/EventServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/controllers/SeatController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/dtos/SeatCategoryUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/dtos/SeatResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/entities/Seat.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/entities/SeatPricing.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/enums/SeatCategory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/enums/SeatStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/exceps/SeatExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/exceps/SeatNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/repos/SeatPricingRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/repos/SeatRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/services/SeatService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/seats/services/SeatServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/controllers/ShowController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/dtos/ShowResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/dtos/ShowUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/dtos/ShowWithSeatsCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/entities/Show.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/enums/ShowStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/exps/InsufficientVenueCapacityException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/exps/ShowExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/exps/ShowHasBookingException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/exps/ShowNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/repos/ShowRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/services/ShowService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/shows/services/ShowServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/controllers/VenueController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/dtos/VenueCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/dtos/VenueResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/dtos/VenueUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/entities/Venue.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/exceps/VenueCapacityBelowShowCapacityException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/exceps/VenueExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/exceps/VenueHasDependenciesException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/exceps/VenueNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/exceps/VenueScheduleConflictException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/repos/VenueRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/services/VenueService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/catalog/venues/services/VenueServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/controllers/CheckoutController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/dtos/CheckoutCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/dtos/CheckoutStatusResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/dtos/StartCheckoutResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/exceptions/CheckoutExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/exceptions/PaymentSessionException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/service/CheckoutService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/checkout/service/CheckoutServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/JwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/JwtService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/JwtValidationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/RedisConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/UserDetailServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/config/ValidationExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/jobs/JobsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/payment/dtos/BookingCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/payment/entities/Payment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/payment/enums/PaymentStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/payment/repos/PaymentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/provider/CheckoutSessionProvider.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/provider/stripe/StripeCheckoutSessionProvider.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/provider/stripe/webhook/StripeWebhookController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/provider/stripe/webhook/StripeWebhookService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/provider/stripe/webhook/StripeWebhookServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/dtos/RegisterRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/dtos/RegisterResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/dtos/UserDetailsDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/dtos/UserLoginRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/entities/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/entities/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/entities/UserDetailsImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/repos/RoleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/repos/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/josue/ticketing/user/service/UserServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/josue/ticketing/TicketingApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ticketing" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ticketing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+        <option value="Record" />
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="39NChFpdAbjlPeZf3oQkiQPf5TL" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build ticketing.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.TicketingApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/Josue/IdeaProjects/ticketing&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/load-test/src/gatling/java" />
+      <recent name="$PROJECT_DIR$/application" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TicketingApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="envFilePaths">
+        <option value="$PROJECT_DIR$/.env" />
+      </option>
+      <module name="ticketing.main" />
+      <selectedOptions>
+        <option name="environmentVariables" />
+      </selectedOptions>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.josue.ticketing.TicketingApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.29346.240" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dfdb6ae2-cc6f-4031-afcf-9a2e20329748" name="Changes" comment="" />
+      <created>1770527259643</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770527259643</updated>
+      <workItem from="1770527260792" duration="2429000" />
+      <workItem from="1770574996671" duration="1146000" />
+      <workItem from="1770601065906" duration="514000" />
+      <workItem from="1770603554591" duration="4226000" />
+      <workItem from="1770609032565" duration="272000" />
+      <workItem from="1770645298170" duration="485000" />
+      <workItem from="1770653611087" duration="23023000" />
+      <workItem from="1770686117285" duration="3998000" />
+      <workItem from="1770725439614" duration="73000" />
+      <workItem from="1770725535056" duration="44460000" />
+      <workItem from="1770826149228" duration="1639000" />
+      <workItem from="1770831210458" duration="3715000" />
+      <workItem from="1770940989148" duration="1043000" />
+      <workItem from="1771007395096" duration="34101000" />
+      <workItem from="1771075566726" duration="953000" />
+      <workItem from="1771082101025" duration="18691000" />
+      <workItem from="1771160204439" duration="2369000" />
+      <workItem from="1771162752988" duration="352000" />
+      <workItem from="1771164997261" duration="6731000" />
+      <workItem from="1771188434822" duration="1878000" />
+      <workItem from="1771199758668" duration="14088000" />
+      <workItem from="1771255458682" duration="4854000" />
+      <workItem from="1771263532951" duration="87000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.jsonwebtoken/jjwt-api/0.13.0/559afb56b22755a60b68654fd372dc1f94ea431e/jjwt-api-0.13.0-sources.jar!/io/jsonwebtoken/Claims.java</url>
+          <line>90</line>
+          <properties class="io.jsonwebtoken.Claims">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-core/6.5.7/c67a8132a30f7d173f4928ebc755f08c5f2797f5/spring-security-core-6.5.7-sources.jar!/org/springframework/security/authentication/UsernamePasswordAuthenticationToken.java</url>
+          <line>36</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

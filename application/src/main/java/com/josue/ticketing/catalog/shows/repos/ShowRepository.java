@@ -35,10 +35,11 @@ public interface ShowRepository extends JpaRepository<Show, Integer> {
 
     @Modifying
     @Query(value = """
-                UPDATE shows s
-                SET s.status = 'FINISHED'
-                WHERE s.status = 'SCHEDULED' AND s.end_time <= now()
-            """, nativeQuery = true)
+        UPDATE spring_schema.shows s
+        SET status = 'FINISHED'
+        WHERE s.status = 'SCHEDULED'
+        AND s.end_time <= now()
+    """, nativeQuery = true)
     void markAsFinished();
 
 }
