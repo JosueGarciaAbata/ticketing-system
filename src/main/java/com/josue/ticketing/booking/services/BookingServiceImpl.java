@@ -27,6 +27,7 @@ import com.josue.ticketing.user.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -49,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
     private final PaymentRepository paymentRepository;
 
     @Override
+    @Transactional
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
         Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
         if (validSeats.isEmpty()) {
@@ -119,6 +121,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public void confirm(UUID publicId) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
@@ -147,6 +150,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public void cancel(UUID publicId, String reason) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
@@ -171,6 +175,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public void expire(UUID publicId) {
         Booking booking = bookingRepository.findByPublicId(publicId).orElse(null);
         if (booking == null) {

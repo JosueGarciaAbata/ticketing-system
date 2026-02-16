@@ -18,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +60,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         if (!metadata.get("userId").equals(userId.toString())) {
-            throw new IllegalStateException("No tienes acceso para realizar esta operación.");
+            throw new AccessDeniedException("No tienes acceso para realizar esta operación.");
         }
 
         String bookingPublicId = metadata.get("bookingPublicId");
@@ -89,11 +89,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public void expireCheckoutSession(String sessionId) {
-        Session session = null;
+        Session session;
         try {
             session = Session.retrieve(sessionId);
         } catch (StripeException e) {
-            throw new IllegalStateException("No se pudo recuperar la sesion.");
+            throw new PaymentSessionException("No se pudo recuperar la sesion de Stripe.");
         }
 
         Map<String, String> metadata = session.getMetadata();
@@ -104,13 +104,13 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         if (!metadata.get("userId").equals(userId.toString())) {
-            throw new IllegalStateException("No tienes acceso para realizar esta operación.");
+            throw new AccessDeniedException("No tienes acceso para realizar esta operación.");
         }
 
         try {
             session.expire();
         } catch (StripeException e) {
-            throw new IllegalStateException("No se pudo expirar la sesion.");
+            throw new PaymentSessionException("No se pudo expirar la sesion de Stripe.");
         }
 
         System.out.println("Session expired: " + session.getStatus());

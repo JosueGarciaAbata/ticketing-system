@@ -15,11 +15,10 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SeatServiceImpl implements  SeatService {
+public class SeatServiceImpl implements SeatService {
 
     private final SeatRepository seatRepository;
     private final SeatPricingRepository seatPricingRepository;
@@ -36,8 +35,7 @@ public class SeatServiceImpl implements  SeatService {
                         seat.getSeatNumber(),
                         seat.getCategory(),
                         seat.getStatus(),
-                        getPriceByCategory(showId, seat.getCategory())
-                ))
+                        getPriceByCategory(showId, seat.getCategory())))
                 .toList();
     }
 
@@ -45,7 +43,8 @@ public class SeatServiceImpl implements  SeatService {
     @Override
     public SeatResponse changeCategory(Integer id, SeatCategory category) {
 
-        Seat seat = seatRepository.findById(id).orElseThrow(() -> new SeatNotFoundException("Asiento no encontrado con id= " + id));
+        Seat seat = seatRepository.findById(id)
+                .orElseThrow(() -> new SeatNotFoundException("Asiento no encontrado con id= " + id));
 
         if (!seat.getCategory().equals(category)) {
             seat.setCategory(category);
@@ -60,8 +59,7 @@ public class SeatServiceImpl implements  SeatService {
                 seat.getSeatNumber(),
                 seat.getCategory(),
                 seat.getStatus(),
-                getPriceByCategory(showId, category)
-        );
+                getPriceByCategory(showId, category));
     }
 
     private BigDecimal getPriceByCategory(Integer showId, SeatCategory category) {
@@ -72,6 +70,11 @@ public class SeatServiceImpl implements  SeatService {
             map.put(pricing.getCategory(), pricing.getPrice());
         }
 
-        return map.get(category);
+        BigDecimal price = map.get(category);
+        if (price == null) {
+            throw new IllegalStateException(
+                    "No se encontró el precio para la categoría " + category + " en showId=" + showId);
+        }
+        return price;
     }
 }

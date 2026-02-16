@@ -53,12 +53,12 @@ public class ShowServiceImpl implements ShowService {
     public List<ShowResponse> findAll() {
         return showRepository.findAll().stream()
                 .map(show -> new ShowResponse(
-                show.getId(),
-                show.getEvent().getId(),
-                show.getVenue().getId(),
-                show.getCapacity(),
-                show.getStartTime(),
-                show.getEndTime(),
+                        show.getId(),
+                        show.getEvent().getId(),
+                        show.getVenue().getId(),
+                        show.getCapacity(),
+                        show.getStartTime(),
+                        show.getEndTime(),
                         show.getStatus()))
                 .toList();
     }
@@ -77,8 +77,7 @@ public class ShowServiceImpl implements ShowService {
                 show.getCapacity(),
                 show.getStartTime(),
                 show.getEndTime(),
-                show.getStatus()
-        );
+                show.getStatus());
     }
 
     private Show create(ShowWithSeatsCreateRequest req) {
@@ -87,14 +86,17 @@ public class ShowServiceImpl implements ShowService {
         Integer venueId = req.venueId();
         Integer capacity = req.capacity();
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event no encontrado con id= " + eventId));
-        Venue venue = venueRepository.findById(venueId).orElseThrow(() -> new VenueNotFoundException("Venue no encontrado"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event no encontrado con id= " + eventId));
+        Venue venue = venueRepository.findById(venueId)
+                .orElseThrow(() -> new VenueNotFoundException("Venue no encontrado"));
 
         int usedCapacity = showRepository.sumCapacityByVenueId(venueId);
         int availableCapacity = venue.getCapacity() - usedCapacity;
 
         if (capacity > availableCapacity) {
-            throw new InsufficientVenueCapacityException("No hay suficiente espacio en el lugar. Disponible =" + availableCapacity);
+            throw new InsufficientVenueCapacityException(
+                    "No hay suficiente espacio en el lugar. Disponible =" + availableCapacity);
         }
 
         if (showRepository.existsOverlapBetween(venue.getId(), req.startTime(), req.endTime())) {
@@ -143,11 +145,12 @@ public class ShowServiceImpl implements ShowService {
         SeatPricing secondSeatPricing = new SeatPricing();
         secondSeatPricing.setShow(show);
 
-        BigDecimal vipSeatPrice =  price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.UP);
+        BigDecimal vipSeatPrice = price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.UP);
         secondSeatPricing.setPrice(vipSeatPrice);
         secondSeatPricing.setCategory(SeatCategory.VIP);
 
-        seatPricingRepository.saveAll(List.of(seatPricing, secondSeatPricing));;
+        seatPricingRepository.saveAll(List.of(seatPricing, secondSeatPricing));
+        ;
     }
 
     private int calculateVipSeats(int quantityOfSeats) {
@@ -155,15 +158,19 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
+    @Transactional
     public ShowResponse update(Integer id, ShowUpdateRequest req) {
 
-        Show show = showRepository.findById(id).orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + id));
-        if (showRepository.existsOverlapBetween(show.getVenue().getId(), req.startTime(), req.endTime())) {
+        Show show = showRepository.findById(id)
+                .orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + id));
+        if (showRepository.existsOverlapBetweenExcludingShowId(show.getVenue().getId(), req.startTime(), req.endTime(),
+                show.getId())) {
             throw new VenueScheduleConflictException("El lugar ya tiene un show programado en ese horario.");
         }
 
         show.setStartTime(req.startTime());
         show.setEndTime(req.endTime());
+        showRepository.save(show);
 
         return new ShowResponse(
                 show.getId(),
@@ -172,15 +179,15 @@ public class ShowServiceImpl implements ShowService {
                 show.getCapacity(),
                 show.getStartTime(),
                 show.getEndTime(),
-                show.getStatus()
-        );
+                show.getStatus());
     }
 
     @Transactional(readOnly = false)
     @Override
     public void cancelBookingAndReleaseSeats(Integer showId) {
         // Existe el show
-        Show show = showRepository.findById(showId).orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
+        Show show = showRepository.findById(showId)
+                .orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
 
         // Con funciones reservadas...
         if (bookingRepository.existsConfirmedBookingByShowId(showId)) {
@@ -191,9 +198,7 @@ public class ShowServiceImpl implements ShowService {
         List<Booking> activeBookings = bookingRepository.findAllActiveBookingsByShowId(showId);
 
         // Se liberan asientos
-        activeBookings.forEach(b ->
-                bookingSeatRepository.deleteByBookingId(b.getId())
-        );
+        activeBookings.forEach(b -> bookingSeatRepository.deleteByBookingId(b.getId()));
 
         // Y se cancelan reservas
         activeBookings.forEach(b -> {

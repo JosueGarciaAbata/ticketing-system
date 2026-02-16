@@ -15,21 +15,30 @@ public interface ShowRepository extends JpaRepository<Show, Integer> {
     int sumCapacityByVenueId(Integer venueId);
 
     @Query("""
-        SELECT COUNT(s) > 0
-        FROM Show s 
-        WHERE s.venue.id = :venueId AND
-              (s.startTime < :endTime AND :startTime < s.endTime)
-        """)
+            SELECT COUNT(s) > 0
+            FROM Show s
+            WHERE s.venue.id = :venueId AND
+                  (s.startTime < :endTime AND :startTime < s.endTime)
+            """)
     boolean existsOverlapBetween(Integer venueId, ZonedDateTime startTime, ZonedDateTime endTime);
+
+    @Query("""
+            SELECT COUNT(s) > 0
+            FROM Show s
+            WHERE s.venue.id = :venueId AND s.id <> :showId AND
+                  (s.startTime < :endTime AND :startTime < s.endTime)
+            """)
+    boolean existsOverlapBetweenExcludingShowId(Integer venueId, ZonedDateTime startTime, ZonedDateTime endTime,
+            Integer showId);
 
     boolean existsByEventId(Integer eventId);
 
     @Modifying
     @Query(value = """
-        UPDATE shows s
-        SET s.status = 'FINISHED'
-        WHERE s.status = 'SCHEDULED' AND s.end_time <= now()
-    """, nativeQuery = true)
+                UPDATE shows s
+                SET s.status = 'FINISHED'
+                WHERE s.status = 'SCHEDULED' AND s.end_time <= now()
+            """, nativeQuery = true)
     void markAsFinished();
 
 }
