@@ -8,7 +8,10 @@ import com.josue.ticketing.catalog.events.entities.Event;
 import com.josue.ticketing.catalog.events.exceptions.EventNotFoundException;
 import com.josue.ticketing.catalog.events.repos.EventRepository;
 import com.josue.ticketing.catalog.seats.entities.Seat;
+import com.josue.ticketing.catalog.seats.entities.SeatPricing;
 import com.josue.ticketing.catalog.seats.enums.SeatCategory;
+import com.josue.ticketing.catalog.seats.enums.SeatStatus;
+import com.josue.ticketing.catalog.seats.repos.SeatPricingRepository;
 import com.josue.ticketing.catalog.seats.repos.SeatRepository;
 import com.josue.ticketing.catalog.shows.dtos.ShowWithSeatsCreateRequest;
 import com.josue.ticketing.catalog.shows.dtos.ShowResponse;
@@ -27,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -42,6 +47,7 @@ public class ShowServiceImpl implements ShowService {
     private final SeatRepository seatRepository;
     private final BookingRepository bookingRepository;
     private final BookingSeatRepository bookingSeatRepository;
+    private final SeatPricingRepository seatPricingRepository;
 
     @Override
     public List<ShowResponse> findAll() {
@@ -61,6 +67,7 @@ public class ShowServiceImpl implements ShowService {
     public ShowResponse createShowWithSeats(ShowWithSeatsCreateRequest showWithSeatsCreateRequest) {
         Show show = create(showWithSeatsCreateRequest);
         createSeatsForShow(show);
+        createSeatsPricingForShow(show, showWithSeatsCreateRequest.seatPrice());
 
         return new ShowResponse(
                 show.getId(),
@@ -122,6 +129,23 @@ public class ShowServiceImpl implements ShowService {
                 .toList();
 
         seatRepository.saveAll(seats);
+    }
+
+    private void createSeatsPricingForShow(Show show, BigDecimal price) {
+
+        SeatPricing seatPricing = new SeatPricing();
+        seatPricing.setShow(show);
+        seatPricing.setPrice(price);
+        seatPricing.setCategory(SeatCategory.NORMAL);
+
+        SeatPricing secondSeatPricing = new SeatPricing();
+        secondSeatPricing.setShow(show);
+
+        BigDecimal vipSeatPrice =  price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.UP);
+        secondSeatPricing.setPrice(vipSeatPrice);
+        secondSeatPricing.setCategory(SeatCategory.VIP);
+
+        seatPricingRepository.saveAll(List.of(seatPricing, secondSeatPricing));;
     }
 
     private int calculateVipSeats(int quantityOfSeats) {

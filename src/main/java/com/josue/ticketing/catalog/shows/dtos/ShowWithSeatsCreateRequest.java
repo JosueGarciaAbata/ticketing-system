@@ -1,15 +1,15 @@
 package com.josue.ticketing.catalog.shows.dtos;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 public record ShowWithSeatsCreateRequest(
     @NotNull @Positive Integer eventId,
     @NotNull @Positive Integer venueId,
     @NotNull @Positive Integer capacity,
+    @NotNull @Positive @DecimalMin(value = "1.00") BigDecimal seatPrice,
     @NotNull @FutureOrPresent ZonedDateTime startTime,
     @NotNull @FutureOrPresent ZonedDateTime endTime) {
 
