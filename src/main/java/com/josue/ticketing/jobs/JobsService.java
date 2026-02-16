@@ -29,5 +29,4 @@ public class JobsService {
             batch.forEach(booking -> bookingService.expire(booking.getPublicId()));
         } while (!batch.isEmpty());
     }
-
 }

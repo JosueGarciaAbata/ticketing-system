@@ -104,17 +104,28 @@ public class ShowServiceImpl implements ShowService {
 
     private void createSeatsForShow(Show show) {
         int quantityOfSeats = show.getCapacity();
+        int vipsSeats = calculateVipSeats(quantityOfSeats);
+
         List<Seat> seats = IntStream.rangeClosed(1, quantityOfSeats)
                 .mapToObj(i -> {
                     Seat seat = new Seat();
                     seat.setShow(show);
                     seat.setSeatNumber("A" + i);
-                    seat.setCategory(SeatCategory.NORMAL);
+
+                    if (i <= vipsSeats) {
+                        seat.setCategory(SeatCategory.VIP);
+                    } else {
+                        seat.setCategory(SeatCategory.NORMAL);
+                    }
                     return seat;
                 })
                 .toList();
 
         seatRepository.saveAll(seats);
+    }
+
+    private int calculateVipSeats(int quantityOfSeats) {
+        return (int) Math.ceil(quantityOfSeats * 0.10);
     }
 
     @Override
