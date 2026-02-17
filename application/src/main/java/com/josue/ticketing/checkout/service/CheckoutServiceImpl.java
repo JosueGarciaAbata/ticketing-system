@@ -43,6 +43,18 @@ public class CheckoutServiceImpl implements CheckoutService {
         return sessionUrl;
     }
 
+    @Transactional()
+    @Override
+    public String startCheckoutDbOnly(CheckoutCreateRequest req) {
+        BookingCreateRequest bookingCreateRequest = new BookingCreateRequest(req.showId(), req.seatsId());
+        BookingCreateResponse response = bookingService.createDbOnly(bookingCreateRequest);
+
+        UUID bookingPublicId = response.bookingPublicId();
+        String sessionUrl = checkoutSessionProvider.createCheckoutSessionUrl(bookingPublicId);
+
+        return sessionUrl;
+    }
+
     @Override
     public CheckoutStatusResponse getCheckoutStatus(String sessionId) {
         Integer userId = authService.getUserId();

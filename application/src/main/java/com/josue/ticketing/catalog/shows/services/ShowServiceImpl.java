@@ -150,7 +150,7 @@ public class ShowServiceImpl implements ShowService {
         secondSeatPricing.setCategory(SeatCategory.VIP);
 
         seatPricingRepository.saveAll(List.of(seatPricing, secondSeatPricing));
-        ;
+
     }
 
     private int calculateVipSeats(int quantityOfSeats) {

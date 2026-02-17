@@ -12,7 +12,10 @@ import com.josue.ticketing.booking.redis.RedisSeatHoldService;
 import com.josue.ticketing.booking.repos.BookingRepository;
 import com.josue.ticketing.booking.repos.BookingSeatRepository;
 import com.josue.ticketing.catalog.seats.entities.Seat;
+import com.josue.ticketing.catalog.seats.entities.SeatPricing;
+import com.josue.ticketing.catalog.seats.enums.SeatCategory;
 import com.josue.ticketing.catalog.seats.enums.SeatStatus;
+import com.josue.ticketing.catalog.seats.repos.SeatPricingRepository;
 import com.josue.ticketing.catalog.shows.entities.Show;
 import com.josue.ticketing.catalog.shows.enums.ShowStatus;
 import com.josue.ticketing.catalog.shows.exps.ShowNotFoundException;
@@ -31,8 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +53,7 @@ public class BookingServiceImpl implements BookingService {
     private final int ttlSeatHold = 480; // 8 minutos
     private final int bookingExpiresAt = 300; // 5 minutos
     private final PaymentRepository paymentRepository;
+    private final SeatPricingRepository seatPricingRepository;
 
     @Override
     @Transactional
@@ -122,6 +128,70 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
+    public BookingCreateResponse createDbOnly(BookingCreateRequest bookingCreateRequest) {
+        Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
+        if (validSeats.isEmpty()) {
+            throw new NoAvailableSeatsException("No hay asientos disponibles para reservar.");
+        }
+
+        Integer showId = bookingCreateRequest.showId();
+        Show show = showRepository.findById(showId)
+                .orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
+
+        if (show.getStatus().equals(ShowStatus.CANCELED) || show.getStatus().equals(ShowStatus.FINISHED)) {
+            throw new IllegalStateException("El show ha sido cancelado/terminado, no se puede reservar. Id=" + showId);
+        }
+
+        Integer userId = authService.getUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
+
+        // Validacion SOLO contra BD (sin Redis): asientos no vendidos + no actualmente
+        // retenidos (ACTIVE no expirado)
+        List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
+        List<Integer> currentlyHeldSeatIds = bookingSeatRepository.findCurrentlyHeldSeatIds(
+                showId,
+                validSeatsId,
+                ZonedDateTime.now());
+        if (!currentlyHeldSeatIds.isEmpty()) {
+            throw new SeatsAlreadyHeldException(
+                    "Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
+        }
+
+        UUID bookingPublicId = UUID.randomUUID();
+
+        Booking booking = new Booking();
+        booking.setPublicId(bookingPublicId);
+        booking.setShow(show);
+        booking.setUser(user);
+        booking.setExpiresAt(ZonedDateTime.now().plusSeconds(bookingExpiresAt));
+        bookingRepository.save(booking);
+
+        List<BookingSeat> bookingSeats = new ArrayList<>();
+        for (Seat seat : validSeats) {
+            BookingSeatId bookingSeatId = new BookingSeatId();
+            BookingSeat bookingSeat = new BookingSeat();
+
+            bookingSeatId.setSeatId(seat.getId());
+            bookingSeat.setBooking(booking);
+            bookingSeat.setId(bookingSeatId);
+            bookingSeat.setBooking(booking);
+            bookingSeat.setSeat(seat);
+
+            bookingSeats.add(bookingSeat);
+        }
+
+        bookingSeatRepository.saveAll(bookingSeats);
+
+        return new BookingCreateResponse(
+                booking.getPublicId(),
+                showId,
+                booking.getStatus());
+    }
+
+    @Override
+    @Transactional
+    @SuppressWarnings("null")
     public void confirm(UUID publicId) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
@@ -151,6 +221,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
+    @SuppressWarnings("null")
     public void cancel(UUID publicId, String reason) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
@@ -189,10 +260,28 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.CANCELED);
         booking.setCancelReason("timeout");
 
+        int capacity = booking.getShow().getCapacity();
+        int vipSeats = calculateVipSeats(capacity);
+        int normalSeats = capacity - vipSeats;
+
+        Map<SeatCategory, BigDecimal> prices = seatPricingRepository.findAllByShowId(booking.getShow().getId())
+                .stream()
+                .collect(Collectors.toMap(
+                        SeatPricing::getCategory,
+                        SeatPricing::getPrice));
+
+        BigDecimal finalAmount = prices.getOrDefault(SeatCategory.NORMAL, BigDecimal.ZERO)
+                .multiply(BigDecimal.valueOf(normalSeats))
+                .add(
+                        prices.getOrDefault(SeatCategory.VIP, BigDecimal.ZERO)
+                                .multiply(BigDecimal.valueOf(vipSeats)));
+
         Payment failedPayment = new Payment();
+        failedPayment.setPublicId(UUID.randomUUID());
         failedPayment.setBooking(booking);
         failedPayment.setProvider("SYSTEM");
         failedPayment.setProviderReference("bk_" + publicId.toString());
+        failedPayment.setAmount(finalAmount);
         failedPayment.setStatus(PaymentStatus.FAILED);
 
         List<BookingSeat> bookingSeats = bookingSeatRepository.findByBookingId(booking.getId());
@@ -207,5 +296,9 @@ public class BookingServiceImpl implements BookingService {
         redisSeatHoldService.releaseSeats(
                 booking.getShow().getId(),
                 seatIds);
+    }
+
+    private int calculateVipSeats(int quantityOfSeats) {
+        return (int) Math.ceil(quantityOfSeats * 0.10);
     }
 }

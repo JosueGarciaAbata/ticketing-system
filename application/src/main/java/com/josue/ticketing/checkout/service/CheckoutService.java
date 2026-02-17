@@ -6,7 +6,11 @@ import com.josue.ticketing.checkout.dtos.CheckoutCreateRequest;
 public interface CheckoutService {
 
     String startCheckout(CheckoutCreateRequest req);
+
+    String startCheckoutDbOnly(CheckoutCreateRequest req);
+
     CheckoutStatusResponse getCheckoutStatus(String sessionId);
+
     void expireCheckoutSession(String sessionId);
 
 }

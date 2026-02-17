@@ -8,8 +8,13 @@ import java.util.UUID;
 public interface BookingService {
 
     BookingCreateResponse create(BookingCreateRequest bookingCreateRequest);
+
+    BookingCreateResponse createDbOnly(BookingCreateRequest bookingCreateRequest);
+
     void confirm(UUID publicId);
+
     void cancel(UUID publicId, String reason);
+
     void expire(UUID publicId);
 
 }

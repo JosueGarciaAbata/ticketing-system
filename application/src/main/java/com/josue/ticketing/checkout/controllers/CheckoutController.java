@@ -29,6 +29,14 @@ public class CheckoutController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'CLIENT')")
+    @PostMapping("/db-only")
+    public ResponseEntity<StartCheckoutResponse> startCheckoutDbOnly(@Valid @RequestBody CheckoutCreateRequest req) {
+        String uri = checkoutService.startCheckoutDbOnly(req);
+        StartCheckoutResponse response = new StartCheckoutResponse("Sesion creada con exito", uri);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'CLIENT')")
     @GetMapping({ "/status", "/payment-status" })
     public ResponseEntity<CheckoutStatusResponse> getCheckout(
             @NotBlank @RequestParam("session_id") String sessionId) {
