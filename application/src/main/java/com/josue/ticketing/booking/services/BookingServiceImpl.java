@@ -31,8 +31,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -56,14 +54,46 @@ public class BookingServiceImpl implements BookingService {
     private final SeatPricingRepository seatPricingRepository;
 
     @Override
-    @Transactional
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
+        Integer showId = bookingCreateRequest.showId();
+        Set<Integer> requestedSeatsId = bookingCreateRequest.seatsId();
+        List<Integer> seatsIdList = new ArrayList<>(requestedSeatsId);
+
+        // 1. FAIL-FAST: Intentar bloquear en Redis PRIMERO (operación atómica, ~2-3ms)
+        // Si falla, retornamos inmediatamente SIN tocar la BD
+        UUID bookingPublicId = UUID.randomUUID();
+        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(
+                showId, seatsIdList, bookingPublicId.toString(), ttlSeatHold);
+
+        if (!seatsSuccessfullyHeld) {
+            throw new SeatsAlreadyHeldException(
+                    "Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
+        }
+
+        // 2. Si llegamos aquí, tenemos el lock en Redis. Ahora validamos y persistimos.
+        try {
+            return persistBooking(bookingCreateRequest, showId, seatsIdList, bookingPublicId);
+        } catch (Exception e) {
+            // Liberar Redis si algo falla en la validación/persistencia
+            redisSeatHoldService.releaseSeats(showId, seatsIdList);
+            throw e;
+        }
+    }
+
+    @Transactional
+    protected BookingCreateResponse persistBooking(
+            BookingCreateRequest bookingCreateRequest,
+            Integer showId,
+            List<Integer> seatsIdList,
+            UUID bookingPublicId) {
+
+        // Validar asientos disponibles en BD
         Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
         if (validSeats.isEmpty()) {
             throw new NoAvailableSeatsException("No hay asientos disponibles para reservar.");
         }
 
-        Integer showId = bookingCreateRequest.showId();
+        // Validar Show
         Show show = showRepository.findById(showId)
                 .orElseThrow(() -> new ShowNotFoundException("Funcion no encontrada con id= " + showId));
 
@@ -71,32 +101,12 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("El show ha sido cancelado/terminado, no se puede reservar. Id=" + showId);
         }
 
+        // Obtener usuario
         Integer userId = authService.getUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
 
-        // Bloquear con redis
-        List<Integer> validSeatsId = validSeats.stream().map(Seat::getId).toList();
-
-        UUID bookingPublicId = UUID.randomUUID();
-        boolean seatsSuccessfullyHeld = redisSeatHoldService.holdSeats(showId, validSeatsId, bookingPublicId.toString(),
-                ttlSeatHold);
-        if (!seatsSuccessfullyHeld) {
-            throw new SeatsAlreadyHeldException(
-                    "Lo sentimos, algunos asientos no pueden ser reservados por el momento.");
-        }
-
-        // Registrar una sincronizacion por si algo falla.
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCompletion(int status) {
-                        if (status == STATUS_ROLLED_BACK) {
-                            redisSeatHoldService.releaseSeats(showId, validSeatsId);
-                        }
-                    }
-                });
-
+        // Persistir Booking
         Booking booking = new Booking();
         booking.setPublicId(bookingPublicId);
         booking.setShow(show);
@@ -104,6 +114,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setExpiresAt(ZonedDateTime.now().plusSeconds(bookingExpiresAt));
         bookingRepository.save(booking);
 
+        // Persistir BookingSeats
         List<BookingSeat> bookingSeats = new ArrayList<>();
         for (Seat seat : validSeats) {
             BookingSeatId bookingSeatId = new BookingSeatId();
@@ -127,7 +138,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public BookingCreateResponse createDbOnly(BookingCreateRequest bookingCreateRequest) {
         Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
         if (validSeats.isEmpty()) {

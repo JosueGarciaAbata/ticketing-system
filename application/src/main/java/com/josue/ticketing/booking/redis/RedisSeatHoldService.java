@@ -17,16 +17,16 @@ public class RedisSeatHoldService {
 
         this.holdScript = new DefaultRedisScript<>();
         this.holdScript.setScriptText("""
-            for i=1,#KEYS do
-                if redis.call("EXISTS", KEYS[i]) == 1 then
-                    return 0
-                end
-            end
-            for i=1,#KEYS do
-                redis.call("SET", KEYS[i], ARGV[1], "EX", ARGV[2])
-            end
-            return 1
-        """);
+                    for i=1,#KEYS do
+                        if redis.call("EXISTS", KEYS[i]) == 1 then
+                            return 0
+                        end
+                    end
+                    for i=1,#KEYS do
+                        redis.call("SET", KEYS[i], ARGV[1], "EX", ARGV[2])
+                    end
+                    return 1
+                """);
         this.holdScript.setResultType(Long.class);
     }
 
@@ -39,8 +39,7 @@ public class RedisSeatHoldService {
                 holdScript,
                 keys,
                 bookingPublicId,
-                String.valueOf(ttlSeconds)
-        );
+                String.valueOf(ttlSeconds));
 
         return Long.valueOf(1).equals(result);
     }
@@ -55,6 +54,29 @@ public class RedisSeatHoldService {
 
     public boolean isSeatHeld(Integer showId, Integer seatId) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(keyFor(showId, seatId)));
+    }
+
+    /**
+     * Verifica si ALGUNO de los asientos ya está retenido en Redis.
+     * Útil para fail-fast antes de hacer queries costosas a la BD.
+     * 
+     * @return true si al menos un asiento está retenido, false si todos están
+     *         libres
+     */
+    public boolean areAnySeatsHeld(Integer showId, List<Integer> seatsId) {
+        if (seatsId == null || seatsId.isEmpty()) {
+            return false;
+        }
+        List<String> keys = seatsId.stream()
+                .map(seatId -> keyFor(showId, seatId))
+                .toList();
+
+        // Usar multiGet es más eficiente que múltiples EXISTS
+        List<String> values = redisTemplate.opsForValue().multiGet(keys);
+        if (values == null) {
+            return false;
+        }
+        return values.stream().anyMatch(v -> v != null);
     }
 
     private String keyFor(Integer showId, Integer seatId) {
