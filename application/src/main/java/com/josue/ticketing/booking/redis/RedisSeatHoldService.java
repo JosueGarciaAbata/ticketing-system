@@ -6,12 +6,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Servicio para retención temporal de asientos usando Redis.
+ */
 @Service
 public class RedisSeatHoldService {
 
     private final StringRedisTemplate redisTemplate;
     private final DefaultRedisScript<Long> holdScript;
 
+    /**
+     * Constructor que inicializa el script Lua para bloqueo atómico de asientos.
+     * 
+     * @param redisTemplate template de Redis para operaciones con strings
+     */
     public RedisSeatHoldService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
 
@@ -30,6 +38,16 @@ public class RedisSeatHoldService {
         this.holdScript.setResultType(Long.class);
     }
 
+    /**
+     * Intenta retener un conjunto de asientos de forma atómica.
+     * 
+     * @param showId          ID del show
+     * @param seatsId         lista de IDs de asientos a retener
+     * @param bookingPublicId ID público de la reserva
+     * @param ttlSeconds      tiempo de vida en segundos del bloqueo
+     * @return true si todos los asientos fueron retenidos, false si alguno ya
+     *         estaba ocupado
+     */
     public boolean holdSeats(Integer showId, List<Integer> seatsId, String bookingPublicId, long ttlSeconds) {
         List<String> keys = seatsId.stream()
                 .map(seatId -> keyFor(showId, seatId))
@@ -44,6 +62,12 @@ public class RedisSeatHoldService {
         return Long.valueOf(1).equals(result);
     }
 
+    /**
+     * Libera los asientos retenidos en Redis.
+     * 
+     * @param showId  ID del show
+     * @param seatsId lista de IDs de asientos a liberar
+     */
     public void releaseSeats(Integer showId, List<Integer> seatsId) {
         List<String> keys = seatsId.stream()
                 .map(seat -> keyFor(showId, seat))
@@ -52,6 +76,13 @@ public class RedisSeatHoldService {
         redisTemplate.delete(keys);
     }
 
+    /**
+     * Verifica si un asiento específico está retenido.
+     * 
+     * @param showId ID del show
+     * @param seatId ID del asiento
+     * @return true si el asiento está retenido
+     */
     public boolean isSeatHeld(Integer showId, Integer seatId) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(keyFor(showId, seatId)));
     }
@@ -79,6 +110,13 @@ public class RedisSeatHoldService {
         return values.stream().anyMatch(v -> v != null);
     }
 
+    /**
+     * Genera la clave Redis para un asiento específico.
+     * 
+     * @param showId ID del show
+     * @param seatId ID del asiento
+     * @return clave en formato "seat:{showId}:{seatId}"
+     */
     private String keyFor(Integer showId, Integer seatId) {
         return "seat:" + showId + ":" + seatId;
     }

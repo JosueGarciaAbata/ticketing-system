@@ -14,6 +14,13 @@ public class AuthService {
 
     private Logger logger = LoggerFactory.getLogger(AuthService.class);
 
+    /**
+     * Obtiene los detalles del usuario autenticado actual.
+     * 
+     * @return detalles del usuario autenticado
+     * @throws AccessDeniedException si el usuario no está autenticado o el
+     *                               principal es inválido
+     */
     public UserDetailsImpl getUserDetails() {
 
         Authentication auth = SecurityContextHolder
@@ -37,6 +44,11 @@ public class AuthService {
         return userDetails;
     }
 
+    /**
+     * Obtiene el ID del usuario autenticado actual.
+     * 
+     * @return ID del usuario autenticado
+     */
     public Integer getUserId() {
         return getUserDetails().getId();
     }

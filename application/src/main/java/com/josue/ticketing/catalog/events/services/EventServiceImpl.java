@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementación del servicio de eventos.
+ */
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -26,24 +29,36 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final ShowRepository showRepository;
 
+    /**
+     * Obtiene todos los eventos con información del organizador.
+     * 
+     * @return lista de eventos
+     */
     @Override
     public List<EventResponse> findAll() {
-        return eventRepository.findAll().stream().map(event ->
-                new EventResponse(
-                        event.getId(),
-                        event.getTitle(),
-                        event.getDescription(),
-                        event.getCategory(),
-                        event.getDurationMinutes(),
-                        event.getUser().getFullName())).toList();
+        return eventRepository.findAll().stream().map(event -> new EventResponse(
+                event.getId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getCategory(),
+                event.getDurationMinutes(),
+                event.getUser().getFullName())).toList();
     }
 
+    /**
+     * Crea un nuevo evento asociado al usuario autenticado.
+     * 
+     * @param req datos del evento
+     * @return evento creado
+     * @throws UsernameNotFoundException si el usuario no existe
+     */
     @Override
     public EventResponse create(EventCreateRequest req) {
 
         // Getting from the authentication.
         Integer userId = authService.getUserId();
-        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con id= " + userId));
 
         Event event = new Event();
         event.setTitle(req.title());
@@ -54,7 +69,7 @@ public class EventServiceImpl implements EventService {
 
         Event created = eventRepository.save(event);
 
-        return new  EventResponse(created.getId(),
+        return new EventResponse(created.getId(),
                 created.getTitle(),
                 created.getDescription(),
                 created.getCategory(),
@@ -62,10 +77,19 @@ public class EventServiceImpl implements EventService {
                 user.getFullName());
     }
 
+    /**
+     * Actualiza un evento existente.
+     * 
+     * @param id  identificador del evento
+     * @param req datos actualizados
+     * @return evento actualizado
+     * @throws EventNotFoundException si el evento no existe
+     */
     @Override
     public EventResponse update(Integer id, EventUpdateRequest req) {
 
-        Event event = eventRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Evento no encontrado con id=" + id));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException("Evento no encontrado con id=" + id));
         event.setTitle(req.title());
         event.setDescription(req.description());
         event.setCategory(req.category());
@@ -79,10 +103,16 @@ public class EventServiceImpl implements EventService {
                 updated.getDescription(),
                 updated.getCategory(),
                 updated.getDurationMinutes(),
-                updated.getUser().getFullName()
-        );
+                updated.getUser().getFullName());
     }
 
+    /**
+     * Elimina un evento verificando que no tenga funciones asociadas.
+     * 
+     * @param id identificador del evento
+     * @throws EventNotFoundException        si el evento no existe
+     * @throws EventHasDependenciesException si el evento tiene funciones
+     */
     @Override
     public void deleteById(Integer id) {
         if (!eventRepository.existsById(id)) {

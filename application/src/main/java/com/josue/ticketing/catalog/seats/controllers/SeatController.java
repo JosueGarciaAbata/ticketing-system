@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestión de asientos.
+ */
 @RestController
 @RequestMapping("/api/v1/seats")
 @RequiredArgsConstructor
@@ -20,11 +23,24 @@ public class SeatController {
 
     private final SeatService seatService;
 
+    /**
+     * Obtiene todos los asientos de un show específico.
+     * 
+     * @param id identificador del show
+     * @return lista de asientos del show
+     */
     @GetMapping("/shows/{id}")
     public List<SeatResponse> getSeats(@Positive @PathVariable Integer id) {
         return seatService.findAllByShowId(id);
     }
 
+    /**
+     * Cambia la categoría de un asiento (VIP/Normal).
+     * 
+     * @param id  identificador del asiento
+     * @param req nueva categoría del asiento
+     * @return asiento actualizado
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<SeatResponse> changeCategory(@Positive @PathVariable Integer id,
             @Valid @RequestBody SeatCategoryUpdateRequest req) {

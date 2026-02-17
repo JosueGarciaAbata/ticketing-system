@@ -12,9 +12,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Manejador global de excepciones de validación.
+ */
 @RestControllerAdvice
 public class ValidationExceptionHandler {
 
+  /**
+   * Maneja excepciones de validación de argumentos de método.
+   * 
+   * @param ex excepción de validación capturada
+   * @return detalle del problema con lista de errores de validación
+   */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
     ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -27,6 +36,12 @@ public class ValidationExceptionHandler {
     return pd;
   }
 
+  /**
+   * Maneja excepciones de violación de restricciones de Bean Validation.
+   * 
+   * @param ex excepción de violación de restricciones
+   * @return detalle del problema con lista de violaciones
+   */
   @ExceptionHandler(ConstraintViolationException.class)
   public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
     ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
@@ -41,6 +56,12 @@ public class ValidationExceptionHandler {
     return pd;
   }
 
+  /**
+   * Convierte un error de campo en un mapa con información del error.
+   * 
+   * @param fieldError error de campo a convertir
+   * @return mapa con campo, mensaje y valor rechazado
+   */
   private Map<String, Object> toError(FieldError fieldError) {
     Map<String, Object> error = new LinkedHashMap<>();
     error.put("field", fieldError.getField());

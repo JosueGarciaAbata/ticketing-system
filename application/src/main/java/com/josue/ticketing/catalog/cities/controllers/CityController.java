@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestión de ciudades.
+ */
 @RestController
 @RequestMapping("/api/v1/cities")
 @RequiredArgsConstructor
@@ -22,12 +25,23 @@ public class CityController {
 
     private final CityService cityService;
 
+    /**
+     * Obtiene todas las ciudades registradas.
+     * 
+     * @return lista de ciudades
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public List<CityResponse> findAll() {
         return this.cityService.findAll();
     }
 
+    /**
+     * Crea una nueva ciudad.
+     * 
+     * @param req datos de la ciudad a crear
+     * @return ciudad creada
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<CityResponse> create(@Valid @RequestBody CityCreateRequest req) {
@@ -35,6 +49,13 @@ public class CityController {
         return ResponseEntity.ok(res);
     }
 
+    /**
+     * Actualiza una ciudad existente.
+     * 
+     * @param id  identificador de la ciudad
+     * @param req datos actualizados
+     * @return ciudad actualizada
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<CityResponse> update(@Positive @PathVariable Integer id,
@@ -43,6 +64,12 @@ public class CityController {
         return ResponseEntity.ok(res);
     }
 
+    /**
+     * Elimina una ciudad por su ID.
+     * 
+     * @param id identificador de la ciudad
+     * @return respuesta vacía con estado OK
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@Positive @PathVariable Integer id) {

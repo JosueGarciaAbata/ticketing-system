@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementación del servicio de asientos.
+ */
 @Service
 @RequiredArgsConstructor
 public class SeatServiceImpl implements SeatService {
@@ -23,6 +26,12 @@ public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
     private final SeatPricingRepository seatPricingRepository;
 
+    /**
+     * Obtiene todos los asientos de un show con sus precios.
+     * 
+     * @param showId identificador del show
+     * @return lista de asientos con información de precio y estado
+     */
     @Transactional(readOnly = true)
     @Override
     public List<SeatResponse> findAllByShowId(Integer showId) {
@@ -39,6 +48,14 @@ public class SeatServiceImpl implements SeatService {
                 .toList();
     }
 
+    /**
+     * Cambia la categoría de un asiento.
+     * 
+     * @param id       identificador del asiento
+     * @param category nueva categoría (VIP o NORMAL)
+     * @return asiento actualizado con nuevo precio
+     * @throws SeatNotFoundException si el asiento no existe
+     */
     @Transactional
     @Override
     public SeatResponse changeCategory(Integer id, SeatCategory category) {
@@ -62,6 +79,14 @@ public class SeatServiceImpl implements SeatService {
                 getPriceByCategory(showId, category));
     }
 
+    /**
+     * Obtiene el precio de un asiento según su categoría.
+     * 
+     * @param showId   identificador del show
+     * @param category categoría del asiento
+     * @return precio del asiento
+     * @throws IllegalStateException si no existe precio para la categoría
+     */
     private BigDecimal getPriceByCategory(Integer showId, SeatCategory category) {
         Map<SeatCategory, BigDecimal> map = new HashMap<>();
         List<SeatPricing> pricingList = seatPricingRepository.findAllByShowId(showId);

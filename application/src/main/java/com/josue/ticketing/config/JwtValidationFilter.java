@@ -17,15 +17,33 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Filtro de validación JWT que verifica tokens en cada solicitud.
+ */
 public class JwtValidationFilter extends OncePerRequestFilter {
     private JwtService jwtService;
     private UserDetailsService userDetailsService;
 
+    /**
+     * Constructor del filtro de validación JWT.
+     * 
+     * @param jwtService         servicio para operaciones con JWT
+     * @param userDetailsService servicio para cargar detalles de usuario
+     */
     public JwtValidationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Filtra las solicitudes validando el token JWT del header Authorization.
+     * 
+     * @param request     solicitud HTTP entrante
+     * @param response    respuesta HTTP
+     * @param filterChain cadena de filtros
+     * @throws ServletException si ocurre error del servlet
+     * @throws IOException      si ocurre error de E/S
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -60,6 +78,13 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Determina si el filtro debe omitirse para ciertas rutas públicas.
+     * 
+     * @param request solicitud HTTP
+     * @return true si la ruta es pública y no requiere validación JWT
+     * @throws ServletException si ocurre error del servlet
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();

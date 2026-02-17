@@ -29,10 +29,10 @@ public class LoadTestSimulation extends Simulation {
                                         .silent()) // No se muestra en los resultados
 
                         .exec(http("Start checkout")
-                                        .post("/api/v1/checkout/db-only")
+                                        .post("/api/v1/checkout/")
                                         .body(RawFileBody("start_checkout.json")).asJson()
                                         .header("Authorization", "Bearer #{authToken}")
-                                        .check(status().in(200, 409)));
+                                        .check(status().in(200)));
 
         // Primero se inicializa atributos
         // Luego bloques { }

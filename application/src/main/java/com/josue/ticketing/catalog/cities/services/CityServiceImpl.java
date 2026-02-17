@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Implementación del servicio de ciudades.
+ */
 @Service
 @RequiredArgsConstructor
 public class CityServiceImpl implements CityService {
@@ -22,6 +25,11 @@ public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
     private final VenueRepository venueRepository;
 
+    /**
+     * Obtiene todas las ciudades registradas.
+     * 
+     * @return lista de ciudades con sus datos
+     */
     @Transactional(readOnly = true)
     @Override
     public List<CityResponse> findAll() {
@@ -29,10 +37,15 @@ public class CityServiceImpl implements CityService {
                 city.getId(),
                 city.getName(),
                 city.getCountry(),
-                city.getTimezone()
-        )).toList();
+                city.getTimezone())).toList();
     }
 
+    /**
+     * Crea una nueva ciudad.
+     * 
+     * @param req datos de la ciudad a crear
+     * @return ciudad creada con su ID asignado
+     */
     @Transactional(readOnly = false)
     @Override
     public CityResponse create(CityCreateRequest req) {
@@ -47,14 +60,23 @@ public class CityServiceImpl implements CityService {
                 city.getId(),
                 city.getName(),
                 city.getCountry(),
-                city.getTimezone()
-        );
+                city.getTimezone());
     }
 
+    /**
+     * Actualiza una ciudad existente validando duplicados.
+     * 
+     * @param id  identificador de la ciudad
+     * @param req datos actualizados
+     * @return ciudad actualizada
+     * @throws CityNotFoundException      si la ciudad no existe
+     * @throws CityAlreadyExistsException si el nombre y país ya existen
+     */
     @Transactional(readOnly = false)
     @Override
     public CityResponse update(Integer id, CityUpdateRequest req) {
-        City city = cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException("Ciudad no encontrada con id= " + id));
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> new CityNotFoundException("Ciudad no encontrada con id= " + id));
         String name = req.name().trim();
         String country = req.country().trim();
         String timezone = req.timezone().trim();
@@ -83,10 +105,16 @@ public class CityServiceImpl implements CityService {
                 city.getId(),
                 city.getName(),
                 city.getCountry(),
-                city.getTimezone()
-        );
+                city.getTimezone());
     }
 
+    /**
+     * Elimina una ciudad verificando que no tenga dependencias.
+     * 
+     * @param id identificador de la ciudad
+     * @throws CityNotFoundException        si la ciudad no existe
+     * @throws CityHasDependenciesException si la ciudad tiene lugares asociados
+     */
     @Transactional(readOnly = false)
     @Override
     public void deleteById(Integer id) {
@@ -94,7 +122,8 @@ public class CityServiceImpl implements CityService {
             throw new CityNotFoundException("Ciudad no encontrada con id= " + id);
         }
         if (venueRepository.existsByCityId(id)) {
-            throw new CityHasDependenciesException("La ciudad tiene lugares asociados. Borralos primero antes de proseguir.");
+            throw new CityHasDependenciesException(
+                    "La ciudad tiene lugares asociados. Borralos primero antes de proseguir.");
         }
         cityRepository.deleteById(id);
     }

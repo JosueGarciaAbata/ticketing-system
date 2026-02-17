@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.security.access.AccessDeniedException;
 
+/**
+ * Implementación del servicio de checkout integrado con Stripe.
+ */
 @Service
 @RequiredArgsConstructor
 public class CheckoutServiceImpl implements CheckoutService {
@@ -31,6 +34,12 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final BookingRepository bookingRepository;
     private final AuthService authService;
 
+    /**
+     * Inicia el checkout con bloqueo de asientos en Redis.
+     * 
+     * @param req datos del checkout
+     * @return URL de la sesión de checkout de Stripe
+     */
     @Transactional()
     @Override
     public String startCheckout(CheckoutCreateRequest req) {
@@ -43,6 +52,12 @@ public class CheckoutServiceImpl implements CheckoutService {
         return sessionUrl;
     }
 
+    /**
+     * Inicia el checkout validando disponibilidad solo contra base de datos.
+     * 
+     * @param req datos del checkout
+     * @return URL de la sesión de checkout de Stripe
+     */
     @Transactional()
     @Override
     public String startCheckoutDbOnly(CheckoutCreateRequest req) {
@@ -55,6 +70,14 @@ public class CheckoutServiceImpl implements CheckoutService {
         return sessionUrl;
     }
 
+    /**
+     * Obtiene el estado de una sesión de checkout de Stripe.
+     * 
+     * @param sessionId identificador de la sesión
+     * @return estado del checkout con mensaje descriptivo
+     * @throws PaymentSessionException si no se puede recuperar la sesión
+     * @throws AccessDeniedException   si el usuario no es dueño de la sesión
+     */
     @Override
     public CheckoutStatusResponse getCheckoutStatus(String sessionId) {
         Integer userId = authService.getUserId();
@@ -99,6 +122,13 @@ public class CheckoutServiceImpl implements CheckoutService {
         return new CheckoutStatusResponse(session.getStatus(), message);
     }
 
+    /**
+     * Expira manualmente una sesión de checkout en Stripe.
+     * 
+     * @param sessionId identificador de la sesión
+     * @throws PaymentSessionException si no se puede recuperar o expirar la sesión
+     * @throws AccessDeniedException   si el usuario no es dueño de la sesión
+     */
     @Override
     public void expireCheckoutSession(String sessionId) {
         Session session;

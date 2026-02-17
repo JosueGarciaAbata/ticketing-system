@@ -35,8 +35,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.IntStream;
 
-// Faltaria un job que cambie a FINISHED el show cuando ya paso el endTime del momento actual.
-// endTime <= now ... show.status = FINISHED
+/**
+ * Implementación del servicio de funciones con gestión de asientos.
+ */
 @Service
 @RequiredArgsConstructor
 public class ShowServiceImpl implements ShowService {
@@ -49,6 +50,11 @@ public class ShowServiceImpl implements ShowService {
     private final BookingSeatRepository bookingSeatRepository;
     private final SeatPricingRepository seatPricingRepository;
 
+    /**
+     * Obtiene todas las funciones registradas.
+     * 
+     * @return lista de funciones con información completa
+     */
     @Override
     public List<ShowResponse> findAll() {
         return showRepository.findAll().stream()
@@ -63,6 +69,12 @@ public class ShowServiceImpl implements ShowService {
                 .toList();
     }
 
+    /**
+     * Crea una función completa con asientos y configuración de precios.
+     * 
+     * @param showWithSeatsCreateRequest datos de la función
+     * @return función creada
+     */
     @Transactional(readOnly = false)
     @Override
     public ShowResponse createShowWithSeats(ShowWithSeatsCreateRequest showWithSeatsCreateRequest) {
@@ -80,6 +92,16 @@ public class ShowServiceImpl implements ShowService {
                 show.getStatus());
     }
 
+    /**
+     * Crea la entidad Show validando capacidad y conflictos de horario.
+     * 
+     * @param req datos de la función
+     * @return función creada y persistida
+     * @throws EventNotFoundException             si el evento no existe
+     * @throws VenueNotFoundException             si el lugar no existe
+     * @throws InsufficientVenueCapacityException si no hay capacidad
+     * @throws VenueScheduleConflictException     si hay conflicto de horario
+     */
     private Show create(ShowWithSeatsCreateRequest req) {
 
         Integer eventId = req.eventId();
@@ -113,6 +135,11 @@ public class ShowServiceImpl implements ShowService {
         return showRepository.save(show);
     }
 
+    /**
+     * Crea los asientos para una función (10% VIP, 90% Normal).
+     * 
+     * @param show función para la cual crear asientos
+     */
     private void createSeatsForShow(Show show) {
         int quantityOfSeats = show.getCapacity();
         int vipsSeats = calculateVipSeats(quantityOfSeats);
@@ -135,6 +162,12 @@ public class ShowServiceImpl implements ShowService {
         seatRepository.saveAll(seats);
     }
 
+    /**
+     * Crea la configuración de precios para asientos (VIP 10% más caro).
+     * 
+     * @param show  función para configurar precios
+     * @param price precio base para asientos normales
+     */
     private void createSeatsPricingForShow(Show show, BigDecimal price) {
 
         SeatPricing seatPricing = new SeatPricing();
@@ -153,10 +186,25 @@ public class ShowServiceImpl implements ShowService {
 
     }
 
+    /**
+     * Calcula la cantidad de asientos VIP (10% del total).
+     * 
+     * @param quantityOfSeats cantidad total de asientos
+     * @return cantidad de asientos VIP
+     */
     private int calculateVipSeats(int quantityOfSeats) {
         return (int) Math.ceil(quantityOfSeats * 0.10);
     }
 
+    /**
+     * Actualiza los horarios de una función validando conflictos.
+     * 
+     * @param id  identificador de la función
+     * @param req nuevos horarios
+     * @return función actualizada
+     * @throws ShowNotFoundException          si la función no existe
+     * @throws VenueScheduleConflictException si hay conflicto de horario
+     */
     @Override
     @Transactional
     public ShowResponse update(Integer id, ShowUpdateRequest req) {
@@ -182,6 +230,13 @@ public class ShowServiceImpl implements ShowService {
                 show.getStatus());
     }
 
+    /**
+     * Cancela una función liberando reservas activas y marcando como cancelado.
+     * 
+     * @param showId identificador de la función
+     * @throws ShowNotFoundException   si la función no existe
+     * @throws ShowHasBookingException si hay reservas confirmadas
+     */
     @Transactional(readOnly = false)
     @Override
     public void cancelBookingAndReleaseSeats(Integer showId) {

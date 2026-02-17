@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controlador REST para registro de usuarios.
+ */
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -19,12 +22,24 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Registra un nuevo usuario con rol de cliente.
+     * 
+     * @param request datos de registro del usuario
+     * @return respuesta con datos del usuario registrado
+     */
     @PostMapping("/reg/client")
     public ResponseEntity<RegisterResponse> registerClient(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse obtained = userService.register(request, "ROLE_CLIENT");
         return ResponseEntity.status(HttpStatus.CREATED).body(obtained);
     }
 
+    /**
+     * Registra un nuevo usuario con rol de organizador.
+     * 
+     * @param request datos de registro del usuario
+     * @return respuesta con datos del usuario registrado
+     */
     @PostMapping("/reg/organizer")
     public ResponseEntity<RegisterResponse> registerOrganizer(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse obtained = userService.register(request, "ROLE_ORGANIZER");

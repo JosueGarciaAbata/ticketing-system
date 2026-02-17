@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestión de eventos.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/events")
@@ -26,18 +29,36 @@ public class EventController {
 
     private final EventService eventService;
 
+    /**
+     * Obtiene todos los eventos registrados.
+     * 
+     * @return lista de eventos
+     */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @GetMapping("/")
     public List<EventResponse> findAll() {
         return eventService.findAll();
     }
 
+    /**
+     * Crea un nuevo evento.
+     * 
+     * @param eventRequest datos del evento a crear
+     * @return evento creado
+     */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @PostMapping("/")
     public ResponseEntity<EventResponse> create(@Valid @RequestBody EventCreateRequest eventRequest) {
         return ResponseEntity.ok(eventService.create(eventRequest));
     }
 
+    /**
+     * Actualiza un evento existente.
+     * 
+     * @param id           identificador del evento
+     * @param eventRequest datos actualizados
+     * @return evento actualizado
+     */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @PutMapping("/{id}")
     public ResponseEntity<EventResponse> update(@Positive @PathVariable Integer id,
@@ -46,6 +67,12 @@ public class EventController {
         return ResponseEntity.ok(eventService.update(id, eventRequest));
     }
 
+    /**
+     * Elimina un evento por su ID.
+     * 
+     * @param id identificador del evento
+     * @return respuesta vacía con estado OK
+     */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<EventResponse> delete(@Positive @PathVariable Integer id) {

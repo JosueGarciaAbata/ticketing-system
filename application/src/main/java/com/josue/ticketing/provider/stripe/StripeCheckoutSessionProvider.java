@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementación del proveedor de checkout usando Stripe.
+ */
 @Service
 
 public class StripeCheckoutSessionProvider implements CheckoutSessionProvider {
@@ -27,15 +30,30 @@ public class StripeCheckoutSessionProvider implements CheckoutSessionProvider {
   private final BookingRepository bookingRepository;
   private final BookingSeatRepository bookingSeatRepository;
 
+  /**
+   * Constructor que inicializa el proveedor de Stripe.
+   * 
+   * @param bookingRepository     repositorio de reservas
+   * @param bookingSeatRepository repositorio de asientos de reserva
+   * @param authService           servicio de autenticación
+   */
   public StripeCheckoutSessionProvider(BookingRepository bookingRepository,
-                                       BookingSeatRepository bookingSeatRepository,
-                                       AuthService authService) {
+      BookingSeatRepository bookingSeatRepository,
+      AuthService authService) {
     this.bookingRepository = bookingRepository;
     this.bookingSeatRepository = bookingSeatRepository;
     this.authService = authService;
     Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
   }
 
+  /**
+   * Crea una sesión de checkout en Stripe para procesar el pago de una reserva.
+   * 
+   * @param bookingPublicId identificador público de la reserva
+   * @return URL de la sesión de checkout de Stripe
+   * @throws BookingNotFoundException si la reserva no existe
+   * @throws RuntimeException         si no se puede crear la sesión
+   */
   @Override
   public String createCheckoutSessionUrl(UUID bookingPublicId) {
 

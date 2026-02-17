@@ -20,17 +20,34 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-// Hace logeo para el usuario.
+/**
+ * Filtro de autenticación JWT que procesa las solicitudes de login.
+ */
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private JwtService jwtService;
 
+    /**
+     * Constructor del filtro de autenticación JWT.
+     * 
+     * @param manager    administrador de autenticación de Spring Security
+     * @param jwtService servicio para generación de tokens JWT
+     */
     public JwtAuthenticationFilter(AuthenticationManager manager, JwtService jwtService) {
         super.setAuthenticationManager(manager);
         this.setFilterProcessesUrl("/api/v1/login");
         this.jwtService = jwtService;
     }
 
+    /**
+     * Intenta autenticar al usuario extrayendo credenciales del cuerpo de la
+     * solicitud.
+     * 
+     * @param request  solicitud HTTP con credenciales de login
+     * @param response respuesta HTTP
+     * @return resultado de la autenticación
+     * @throws AuthenticationException si la autenticación falla
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
@@ -50,6 +67,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return super.getAuthenticationManager().authenticate(authenticationToken);
     }
 
+    /**
+     * Procesa una autenticación exitosa generando y devolviendo un token JWT.
+     * 
+     * @param request    solicitud HTTP
+     * @param response   respuesta HTTP donde se escribe el token
+     * @param chain      cadena de filtros
+     * @param authResult resultado de la autenticación exitosa
+     * @throws IOException      si ocurre error de E/S
+     * @throws ServletException si ocurre error del servlet
+     */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
@@ -75,6 +102,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType("application/json");
     }
 
+    /**
+     * Procesa una autenticación fallida devolviendo un mensaje de error.
+     * 
+     * @param request  solicitud HTTP
+     * @param response respuesta HTTP con mensaje de error
+     * @param failed   excepción de autenticación fallida
+     * @throws IOException      si ocurre error de E/S
+     * @throws ServletException si ocurre error del servlet
+     */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {

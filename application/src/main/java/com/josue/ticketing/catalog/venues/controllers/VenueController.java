@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestión de lugares (venues).
+ */
 @RestController
 @RequestMapping("/api/v1/venues")
 @RequiredArgsConstructor
@@ -22,18 +25,36 @@ public class VenueController {
 
     private final VenueService venueService;
 
+    /**
+     * Obtiene todos los lugares registrados.
+     * 
+     * @return lista de lugares
+     */
     @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/")
     public List<VenueResponse> findAll() {
         return venueService.findAll();
     }
 
+    /**
+     * Crea un nuevo lugar.
+     * 
+     * @param req datos del lugar a crear
+     * @return lugar creado
+     */
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/")
     public ResponseEntity<VenueResponse> create(@Valid @RequestBody VenueCreateRequest req) {
         return ResponseEntity.ok(venueService.create(req));
     }
 
+    /**
+     * Actualiza un lugar existente.
+     * 
+     * @param id  identificador del lugar
+     * @param req datos actualizados
+     * @return lugar actualizado
+     */
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<VenueResponse> update(@Positive @PathVariable Integer id,
@@ -41,6 +62,12 @@ public class VenueController {
         return ResponseEntity.ok(venueService.update(id, req));
     }
 
+    /**
+     * Elimina un lugar por su ID.
+     * 
+     * @param id identificador del lugar
+     * @return respuesta vacía con estado OK
+     */
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<VenueResponse> delete(@Positive @PathVariable Integer id) {

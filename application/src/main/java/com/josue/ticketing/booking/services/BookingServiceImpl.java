@@ -37,6 +37,10 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementación del servicio de reservas con soporte de Redis para bloqueo de
+ * asientos.
+ */
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -53,6 +57,13 @@ public class BookingServiceImpl implements BookingService {
     private final PaymentRepository paymentRepository;
     private final SeatPricingRepository seatPricingRepository;
 
+    /**
+     * Crea una nueva reserva bloqueando primero los asientos en Redis.
+     * 
+     * @param bookingCreateRequest datos de la reserva
+     * @return respuesta con el ID público de la reserva creada
+     * @throws SeatsAlreadyHeldException si los asientos ya están retenidos
+     */
     @Override
     public BookingCreateResponse create(BookingCreateRequest bookingCreateRequest) {
         Integer showId = bookingCreateRequest.showId();
@@ -80,6 +91,15 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    /**
+     * Persiste la reserva en base de datos después de validar disponibilidad.
+     * 
+     * @param bookingCreateRequest datos originales de la solicitud
+     * @param showId               ID del show
+     * @param seatsIdList          lista de IDs de asientos
+     * @param bookingPublicId      UUID público de la reserva
+     * @return respuesta con datos de la reserva creada
+     */
     @Transactional
     protected BookingCreateResponse persistBooking(
             BookingCreateRequest bookingCreateRequest,
@@ -137,6 +157,14 @@ public class BookingServiceImpl implements BookingService {
                 booking.getStatus());
     }
 
+    /**
+     * Crea una reserva validando solo contra la base de datos (sin Redis).
+     * 
+     * @param bookingCreateRequest datos de la reserva
+     * @return respuesta con el ID público de la reserva
+     * @throws NoAvailableSeatsException si no hay asientos disponibles
+     * @throws SeatsAlreadyHeldException si los asientos ya están retenidos
+     */
     @Override
     public BookingCreateResponse createDbOnly(BookingCreateRequest bookingCreateRequest) {
         Set<Seat> validSeats = bookingRepository.filterAvailableSeatIds(bookingCreateRequest.seatsId());
@@ -199,6 +227,14 @@ public class BookingServiceImpl implements BookingService {
                 booking.getStatus());
     }
 
+    /**
+     * Confirma una reserva activa, marcando asientos como vendidos y liberando
+     * Redis.
+     * 
+     * @param publicId identificador público de la reserva
+     * @throws BookingNotFoundException si la reserva no existe
+     * @throws IllegalStateException    si la reserva expiró o no está activa
+     */
     @Override
     @Transactional
     @SuppressWarnings("null")
@@ -229,6 +265,14 @@ public class BookingServiceImpl implements BookingService {
         redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 
+    /**
+     * Cancela una reserva activa, liberando los asientos en Redis y BD.
+     * 
+     * @param publicId identificador público de la reserva
+     * @param reason   motivo de la cancelación
+     * @throws BookingNotFoundException si la reserva no existe
+     * @throws IllegalStateException    si la reserva no está activa
+     */
     @Override
     @Transactional
     @SuppressWarnings("null")
@@ -255,6 +299,12 @@ public class BookingServiceImpl implements BookingService {
         redisSeatHoldService.releaseSeats(showId, seatsId);
     }
 
+    /**
+     * Expira una reserva por timeout, registrando un pago fallido y liberando
+     * asientos.
+     * 
+     * @param publicId identificador público de la reserva
+     */
     @Override
     @Transactional
     public void expire(UUID publicId) {
@@ -308,6 +358,12 @@ public class BookingServiceImpl implements BookingService {
                 seatIds);
     }
 
+    /**
+     * Calcula la cantidad de asientos VIP (10% del total).
+     * 
+     * @param quantityOfSeats cantidad total de asientos
+     * @return cantidad de asientos VIP
+     */
     private int calculateVipSeats(int quantityOfSeats) {
         return (int) Math.ceil(quantityOfSeats * 0.10);
     }

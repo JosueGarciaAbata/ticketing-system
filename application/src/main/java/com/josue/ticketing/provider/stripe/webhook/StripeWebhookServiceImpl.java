@@ -17,15 +17,24 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+/**
+ * Implementación del servicio de webhooks de Stripe.
+ */
 @Service
 @RequiredArgsConstructor
 public class StripeWebhookServiceImpl implements StripeWebhookService {
 
-    private final Logger  logger = Logger.getLogger(StripeWebhookServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(StripeWebhookServiceImpl.class.getName());
     private final BookingRepository bookingRepository;
     private final BookingService bookingService;
     private final PaymentRepository paymentRepository;
 
+    /**
+     * Procesa el evento de pago exitoso confirmando la reserva y registrando el
+     * pago.
+     * 
+     * @param event evento de Stripe con PaymentIntent exitoso
+     */
     @Transactional(readOnly = false)
     @Override
     public void handlePaymentIntentSucecceded(Event event) {

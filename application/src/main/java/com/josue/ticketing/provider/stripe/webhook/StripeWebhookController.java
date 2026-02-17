@@ -12,12 +12,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+/**
+ * Controlador REST para recibir webhooks de Stripe.
+ */
 @RestController
 public class StripeWebhookController {
 
     private final Logger logger = Logger.getLogger(StripeWebhookController.class.getName());
     private StripeWebhookService stripeWebhookService;
 
+    /**
+     * Constructor del controlador de webhooks.
+     * 
+     * @param stripeWebhookService servicio para procesar eventos de Stripe
+     */
     public StripeWebhookController(StripeWebhookService stripeWebhookService) {
         this.stripeWebhookService = stripeWebhookService;
     }
@@ -25,6 +33,13 @@ public class StripeWebhookController {
     @Value("${STRIPE_WEBHOOK_SECRET}")
     private String endpointSecret;
 
+    /**
+     * Procesa los eventos webhook recibidos de Stripe.
+     * 
+     * @param request solicitud HTTP con el payload del evento
+     * @return respuesta indicando el resultado del procesamiento
+     * @throws Exception si ocurre error en el procesamiento
+     */
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(HttpServletRequest request) throws Exception {
         String payload;

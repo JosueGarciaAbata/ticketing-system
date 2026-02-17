@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+/**
+ * Servicio de tareas programadas para mantenimiento del sistema.
+ */
 @Service
 @RequiredArgsConstructor
 public class JobsService {
@@ -22,6 +25,10 @@ public class JobsService {
     private final BookingService bookingService;
     private final ShowRepository showRepository;
 
+    /**
+     * Expira reservas activas que han superado su tiempo límite.
+     * Se ejecuta cada 60 segundos.
+     */
     @Scheduled(fixedRate = 60000)
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void expireBookings() {
@@ -32,6 +39,10 @@ public class JobsService {
         } while (!batch.isEmpty());
     }
 
+    /**
+     * Marca como finalizados los shows que ya pasaron su hora de fin.
+     * Se ejecuta cada hora (3600000 ms).
+     */
     @Scheduled(fixedRate = 3600000)
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void markShowsAsFinished() {

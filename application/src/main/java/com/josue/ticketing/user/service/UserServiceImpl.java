@@ -12,14 +12,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+/**
+ * Implementación del servicio de usuarios.
+ */
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Registra un nuevo usuario encriptando su contraseña y asignando el rol.
+     * 
+     * @param registerRequest datos de registro
+     * @param roleName        nombre del rol a asignar
+     * @return respuesta con email y nombre completo del usuario
+     * @throws RuntimeException si el email ya existe o el rol es inválido
+     */
     @Override
     public RegisterResponse register(RegisterRequest registerRequest, String roleName) {
 
