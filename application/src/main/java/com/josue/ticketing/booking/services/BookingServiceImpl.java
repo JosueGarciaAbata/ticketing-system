@@ -237,7 +237,6 @@ public class BookingServiceImpl implements BookingService {
      */
     @Override
     @Transactional
-    @SuppressWarnings("null")
     public void confirm(UUID publicId) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
@@ -275,7 +274,6 @@ public class BookingServiceImpl implements BookingService {
      */
     @Override
     @Transactional
-    @SuppressWarnings("null")
     public void cancel(UUID publicId, String reason) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BookingNotFoundException("Reserva no encontrada con id=" + publicId.toString()));
